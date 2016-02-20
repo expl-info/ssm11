@@ -6,7 +6,6 @@ import json
 import os
 import os.path
 import re
-import string
 import subprocess
 import traceback
 
@@ -75,38 +74,7 @@ class Package:
         return os.path.exists(self.path)
 
     def get_control(self):
-        if not os.path.exists(self.control_path):
-            return self.get_control_legacy()
         return json.load(open(self.control_path))
-
-    def get_control_legacy(self):
-        try:
-            d = {}
-            path = os.path.join(os.path.dirname(self.control_path), "control")
-            if os.path.exists(path):
-                k = None
-                v = []
-                for line in open(path):
-                    if line.startswith(" "):
-                        v.append(line)
-                    else:
-                        line = line.strip()
-                        if line == "":
-                            continue
-                        else:
-                            if k != None:
-                                d[k] = "\n".join(v)
-                            t = map(string.strip, line.split(":", 1))
-                            k = t[0].lower().replace(" ", "-")
-                            if k == "package":
-                                k = "name"
-                            v = [t[1]]
-                if k != None:
-                    d[k] = "\n".join(v)
-        except:
-            traceback.print_exc()
-            pass
-        return d
 
     def get_domain(self):
         from ssm.domain import Domain

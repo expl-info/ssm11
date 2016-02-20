@@ -270,9 +270,10 @@ class Domain:
         if self.is_installed(pkg) and not force:
             return Error("package already installed")
         try:
-            pkgfile.unpack(self.path)
-            if not os.path.exists(pkg.control_path):
-                pkg.set_control(pkg.get_control())
+            err = pkgfile.unpack(self.path)
+            if isinstance(err, Error):
+                # TODO: clean up? set broken?
+                return err
             pkg.execute_script("post-install", self.path)
             self.__set_installed(pkg)
         except:
@@ -290,14 +291,8 @@ class Domain:
             # find missing requires
             dm = self.__create_depmgr([platform])
             control = pkg.get_control()
-            name = control.get("name")
-            if name != pkg.short:
-                return Error("package name does not match control information")
-            version = control.get("version")
-            if version != pkg.version:
-                return Error("package version does not match control information")
-            dm.add(name,
-                version,
+            dm.add(control.get("name"),
+                control.get("version"),
                 control.get("requires"),
                 control.get("provides"),
                 control.get("conflicts"))
@@ -309,7 +304,7 @@ class Domain:
         except:
             if globls.debug:
                 traceback.print_exc()
-            return Error("prepublish was unsuccessful")
+            return Error("prepublish was unsuccessful (%s)" % (sys.exc_value,))
 
     def publish(self, pkg, platform, force=False):
         if not self.is_owner():

@@ -17,6 +17,7 @@ from ssm.domain import Domain
 from ssm.error import Error
 from ssm.misc import exits
 from ssm.package import Package
+from ssm.packagefile import upgrade_legacy_control
 
 def print_usage():
     print("""\
@@ -35,7 +36,7 @@ Options:
 
 def run(args):
     try:
-        components = ["meta", "installed", "published", "old-files", "old-dirs"]
+        components = ["meta", "control", "installed", "published", "old-files", "old-dirs"]
         dompath = None
         legacy = None
         globls.verbose = True
@@ -113,14 +114,36 @@ def upgrade_legacy(dompath, components):
                 "version": constants.SSM_VERSION,
             }
             if globls.verbose:
-                "setting domain metadata"
-            print dom.path, meta
+                print "setting domain metadata"
             err = dom.create(meta, True)
             if err:
                 exits(err)
 
+        if "control" in components:
+            names = [name for name in os.listdir(installed_dir) if not name.startswith(".")]
+            for name in names:
+                pkgpath = os.path.join(installed_dir, name)
+                control_path = os.path.join(pkgpath, ".ssm.d/control")
+                if not os.path.exists(control_path):
+                    print "warning: generating control file from name (%s)" % (name,)
+                    try:
+                        t = name.split("_", 2)
+                        d = {
+                            "name": t[0],
+                            "version": t[1],
+                            "platform": t[2],
+                        }
+                    except:
+                        exits "warning: could generate create control file from name (%s)" % (name,)
+                else:
+                    if globls.verbose:
+                        print "upgrading control file"
+                    d = upgrade_legacy_control(control_path)
+                control_path += ".json"
+                if not misc.puts(control_path, json.dumps(d, indent=2))
+                    exits("cannot write new control file")
+
         if "installed" in components:
-            print "AAA"
             # update installed dir
             names = [name for name in os.listdir(installed_dir) if not name.startswith(".")]
             pkgpaths = [os.readlink(os.path.join(installed_dir, name)) for name in names]
@@ -130,11 +153,10 @@ def upgrade_legacy(dompath, components):
                 pkg = Package(pkgpath)
                 if pkg.exists():
                     if globls.verbose:
-                        "upgrading installed setting for package (%s)" % (pkg,)
+                        print "upgrading installed setting for package (%s)" % (pkg,)
                     dom._Domain__set_installed(pkg)
 
         if "published" in components:
-            print "BBB"
             if version[:2] in ["9.", "8.", "7."]:
                 # update published dir
                 names = [name for name in os.listdir(published_dir) if not name.startswith(".")]
@@ -145,7 +167,7 @@ def upgrade_legacy(dompath, components):
                     pkg = Package(pkgpath)
                     if pkg.exists():
                         if globls.verbose:
-                            "upgrading published setting for package (%s)" % (pkg,)
+                            print "upgrading published setting for package (%s)" % (pkg,)
                         dom._Domain__set_published(pkg)
 
         if "old-files" in components:
