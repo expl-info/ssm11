@@ -50,7 +50,8 @@ Options:
 -p <pattern>    Package name pattern with * and ? wilcard support;
                 default is match all (*)
 -pp <pattern>   Platform pattern with * and ? wildcard support;
-                default is taken from SSMUSE_PLATFORM
+                default list is taken from SSM_PLATFORMS or
+                SSMUSE_PLATFORMS
 
 --debug         Enable debugging
 --force         Force operation

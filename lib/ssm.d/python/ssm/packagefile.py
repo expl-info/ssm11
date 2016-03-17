@@ -36,7 +36,8 @@ def upgrade_legacy_control(path):
             if k != None:
                 d[k] = "\n".join(v)
     except:
-        traceback.print_exc()
+        if globls.debug:
+            traceback.print_exc()
     return d
 
 class PackageFile:
@@ -84,7 +85,7 @@ class PackageFile:
                 if not os.path.exists(legacy_control_path):
                     return Error("missing control file")
                 d = upgrade_legacy_control(legacy_control_path)
-                if not misc.puts(control_path, json.dumps(d, indent=2)):
+                if not misc.puts(control_path, json.dumps(d, indent=2, sort_keys=True)):
                     return Error("cannot write new control file")
             else:
                 d = json.load(open(control_path))
@@ -94,7 +95,7 @@ class PackageFile:
             if ct[0] != ft[0]:
                 return Error("bad control file name mismatch (%s, %s)" % (ct[0], ft[0]))
             if ct[1] != ft[1]:
-                return Error("bad control file version mismatch (%s, %s)" % (ct[1], ft[1]))
+                return Error("bad control file version mismatch (%s, %s)" % (t[1], ft[1]))
             if ct[2] != ft[2]:
                 return Error("bad control file platform mismatch (%s, %s)" % (ct[2], ft[2]))
         except:

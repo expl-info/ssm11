@@ -19,7 +19,12 @@ def determine_platform(pkg=None):
     return platform
 
 def determine_platforms():
-    platforms = os.environ.get("SSM_PLATFORMS")
+    if "SSM_PLATFORMS" in os.environ:
+        platforms = os.environ.get("SSM_PLATFORMS")
+    elif "SSMUSE_PLATFORMS" in os.environ:
+        platforms = os.environ["SSMUSE_PLATFORMS"]
+    else:
+        platforms = None
     platforms = platforms and platforms.split() or []
     return platforms
 

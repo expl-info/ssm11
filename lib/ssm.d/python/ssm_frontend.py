@@ -12,19 +12,22 @@ usage: ssm <cmd> [<args>]
 Simple Software Manager.
 
 List operations:
-    ssm diffd|find|listd [<args>]
+    ssm listd [<args>]
 
 Package management:
     ssm install|publish|uninstall|unpublish [<args>]
         
 Domain management:
-    ssm cloned|created|freezed|showd|unfreezed|updated|upgraded [<args>]
+    ssm created|upgraded [<args>]
 
 Other:
     ssm version
 
 For help, specify -h or --help to the command.
 """)
+
+#    ssm diffd|find|listd [<args>]
+#    ssm cloned|created|freezed|showd|unfreezed|updated|upgraded [<args>]
 
 if __name__ == "__main__":
     args = sys.argv[1:]

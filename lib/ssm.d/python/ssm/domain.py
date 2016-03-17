@@ -64,7 +64,7 @@ class Domain:
         misc.symlink(pkg.path, linkname, True)
 
     def __set_meta(self, meta):
-        return puts(self.meta_path, json.dumps(meta))
+        return puts(self.meta_path, json.dumps(meta, indent=2, sort_keys=True))
 
     def __set_published(self, pkg, platform=None):
         platform = platform or pkg.platform

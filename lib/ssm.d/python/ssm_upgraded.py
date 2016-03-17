@@ -5,6 +5,7 @@
 """Provides the upgraded subcommand.
 """
 
+import json
 import os
 import sys
 from sys import stderr
@@ -134,13 +135,13 @@ def upgrade_legacy(dompath, components):
                             "platform": t[2],
                         }
                     except:
-                        exits "warning: could generate create control file from name (%s)" % (name,)
+                        exits("warning: could generate create control file from name (%s)" % (name,))
                 else:
                     if globls.verbose:
                         print "upgrading control file"
                     d = upgrade_legacy_control(control_path)
                 control_path += ".json"
-                if not misc.puts(control_path, json.dumps(d, indent=2))
+                if not misc.puts(control_path, json.dumps(d, indent=2, sort_keys=True)):
                     exits("cannot write new control file")
 
         if "installed" in components:
