@@ -57,10 +57,9 @@ class Builder:
 
     def __build_from_source(self):
         try:
-            initdotfd, initdotpath = None, None
-
             self.__unpackbssm()
 
+            # setup initfile and initpkg
             initdotfd, initdotpath = tempfile.mkstemp(dir=self.workdir)
             os.write(initdotfd, ". ssmuse-sh -d %s\n" % os.path.realpath(self.dompath))
             if self.initfile:
@@ -68,14 +67,12 @@ class Builder:
             if self.initpkg:
                 os.write(initdotfd, ". ssmuse-sh -p %s\n" % self.initpkg)
 
-            args = self.bcontrol.get("args") or []
-            env = self.bcontrol.get("env") or {}
-            if self.sourcesurl:
-                env["BH_SOURCES_URL"] = self.sourcesurl
-            scriptpath = os.path.join(self.bssmtmp, self.bcontrol["bh-script"])
-            print self.initfile, self.initpkg
-            print scriptpath, args, env
-            args = [scriptpath]+args
+            # build command to run
+            bargs = self.bcontrol.get("args") or []
+            benv = self.bcontrol.get("env") or {}
+            buildfile = os.path.join(self.bssmtmp, self.bcontrol["bh-script"])
+
+            args = [buildfile]+bargs
             for k, v in env.items():
                 args.extend(["-v", "%s=%s" % (k, v)])
             args.extend(["-v", "BH_INIT_DOT=%s" % initdotpath])
@@ -83,27 +80,26 @@ class Builder:
             args.extend(["--host", "localhost"])
             args.extend(["-p", self.platform])
             args.extend(["-w", "%s/tmp" % os.getcwd()])
-            print "args (%s)" % (args,)
-            if 1:
-                env = os.environ[:]
 
-                #env["SSM_BUILD_BSSM_FILE"] = self.bssmpath
-                env["SSM_BUILD_BSSM_DIR"] = self.bssmtmp
-                env["SSM_BUILD_BCONTROL_FILE"] = os.path.join(self.bssmtmp, "control.json")
-                env["SSM_BUILD_BUILD_FILE"] = scriptpath
-                env["SSM_BUILD_INIT_DOT"] = initdotpath
-                env["SSM_BUILD_PACKAGE_NAME"] = self.bcontrol.get("name")
-                env["SSM_BUILD_PACKAGE_VERSION"] = self.bcontrol.get("version")
-                env["SSM_BUILD_PACKAGE_PLATFORM"] = self.platform
-                #env["SSM_BUILD_REPOSITORIES"] = self.repourl
-                #env["SSM_BUILD_SOURCES"] = self.sourcesurl
-                env["SSM_BUILD_WORKDIR"] = self.workdir
+            # prep env for command
+            env = os.environ[:]
+            #env["SSM_BUILD_BSSM_FILE"] = self.bssmpath
+            env["SSM_BUILD_BSSM_DIR"] = self.bssmtmp
+            env["SSM_BUILD_BCONTROL_FILE"] = os.path.join(self.bssmtmp, "control.json")
+            env["SSM_BUILD_BUILD_FILE"] = buildfile
+            env["SSM_BUILD_INIT_DOT"] = initdotpath
+            env["SSM_BUILD_PACKAGE_NAME"] = self.bcontrol.get("name")
+            env["SSM_BUILD_PACKAGE_VERSION"] = self.bcontrol.get("version")
+            env["SSM_BUILD_PACKAGE_PLATFORM"] = self.platform
+            #env["SSM_BUILD_REPOSITORIES"] = self.repourl
+            #env["SSM_BUILD_SOURCES"] = self.sourcesurl
+            env["SSM_BUILD_WORKDIR"] = self.workdir
 
-                p = subprocess.Popen(args,
-                    stdout=subprocess.PIPE,
-                    stderr=subprocess.PIPE,
-                    shell=False,
-                    env=env)
+            p = subprocess.Popen(args,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                shell=False,
+                env=env)
             out, err = p.communicate()
             if p.returncode != 0:
                 print "out (%s) err (%s) returncode (%s)" % (out, err, p.returncode)
@@ -116,6 +112,7 @@ class Builder:
             traceback.print_exc()
             pass
         finally:
+            # clean up
             if initdotpath:
                 os.remove(initdotpath)
             if initdotfd != None:
