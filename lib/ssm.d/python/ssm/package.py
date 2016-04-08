@@ -64,10 +64,17 @@ class Package:
         try:
             if not os.access(path, os.X_OK):
                 raise Exception("script (%s) is not executable" % (path,))
-            if os.environ.get("SSM_OLD_PREPOST"):
+
+            env = os.environ[:]
+            if env.get("SSM_OLD_PREPOST"):
                 cmd.insert(0, "/bin/sh")
 
-            p = subprocess.Popen(args)
+            env["SSM_INSTALL_DOMAIN_HOME"] = dompath
+            env["SSM_INSTALL_PACKAGE_HOME"] = self.path
+            env["SSM_INSTALL_PROFILE_PATH"] = os.path.join(self.path, "etc/profile.d/%s.sh" % self.name)
+            env["SSM_INSTALL_LOGIN_PATH"] = os.path.join(self.path, "etc/profile.d/%s.csh" % self.name)
+
+            p = subprocess.Popen(args, env=env)
             p.wait()
             if p.returncode != 0:
                 raise Exception("script (%s) failed" % (path,))
