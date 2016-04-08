@@ -85,10 +85,25 @@ class Builder:
             args.extend(["-w", "%s/tmp" % os.getcwd()])
             print "args (%s)" % (args,)
             if 1:
+                env = os.environ[:]
+
+                #env["SSM_BUILD_BSSM_FILE"] = self.bssmpath
+                env["SSM_BUILD_BSSM_DIR"] = self.bssmtmp
+                env["SSM_BUILD_BCONTROL_FILE"] = os.path.join(self.bssmtmp, "control.json")
+                env["SSM_BUILD_BUILD_FILE"] = scriptpath
+                env["SSM_BUILD_INIT_DOT"] = initdotpath
+                env["SSM_BUILD_PACKAGE_NAME"] = self.bcontrol.get("name")
+                env["SSM_BUILD_PACKAGE_VERSION"] = self.bcontrol.get("version")
+                env["SSM_BUILD_PACKAGE_PLATFORM"] = self.platform
+                #env["SSM_BUILD_REPOSITORIES"] = self.repourl
+                #env["SSM_BUILD_SOURCES"] = self.sourcesurl
+                env["SSM_BUILD_WORKDIR"] = self.workdir
+
                 p = subprocess.Popen(args,
                     stdout=subprocess.PIPE,
                     stderr=subprocess.PIPE,
-                    shell=False)
+                    shell=False,
+                    env=env)
             out, err = p.communicate()
             if p.returncode != 0:
                 print "out (%s) err (%s) returncode (%s)" % (out, err, p.returncode)
