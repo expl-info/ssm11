@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# error.py
+# ssm/error.py
 
 # GPL--start
 # This file is part of ssm (Simple Software Manager)

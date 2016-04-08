@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# deps.py
+# ssm/deps.py
 
 # GPL--start
 # This file is part of ssm (Simple Software Manager)

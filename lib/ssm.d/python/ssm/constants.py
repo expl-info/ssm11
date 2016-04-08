@@ -1,6 +1,6 @@
 #! /usr/bin/env python
 #
-# ssm.constants.py
+# ssm/constants.py
 
 # GPL--start
 # This file is part of ssm (Simple Software Manager)
