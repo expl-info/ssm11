@@ -40,14 +40,20 @@ def gets(path):
     except:
         return None
 
-def get_terminal_size():
+def get_terminal_size(_nrows=24, _ncols=80):
     """Get terminal (rows, cols) size.
-    """
-    import fcntl
-    import termios
-    import struct
 
-    nrows, ncols, pixrows, pixcols = struct.unpack("HHHH", fcntl.ioctl(0, termios.TIOCGWINSZ, struct.pack("HHHH", 0, 0, 0, 0)))
+    If a tty does not exist or some failure occurs, use defaults or
+    what is passed in.
+    """
+    try:
+        import fcntl
+        import termios
+        import struct
+
+        nrows, ncols, pixrows, pixcols = struct.unpack("HHHH", fcntl.ioctl(0, termios.TIOCGWINSZ, struct.pack("HHHH", 0, 0, 0, 0)))
+    except:
+        nrows, ncols = _nrows, _ncols
     return nrows, ncols
 
 def isrealdir(path):
