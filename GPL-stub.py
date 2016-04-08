@@ -1,7 +1,3 @@
-#! /usr/bin/env python
-#
-# ssm.constants.py
-
 # GPL--start
 # This file is part of ssm (Simple Software Manager)
 # Copyright (C) 2005-2012 Environment/Environnement Canada
@@ -20,7 +16,3 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
-
-SSM_VERSION = "11.0"
-
-PUBLISHABLE_DIRS = ["bin", "etc/profile.d", "include", "lib", "man", "share"]
