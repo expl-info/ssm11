@@ -62,7 +62,8 @@ if __name__ == "__main__":
     elif cmd == "diffd":
         print("NIY")
     elif cmd == "find":
-        print("NIY")
+        import ssm_find
+        ssm_find.run(args)
     elif cmd == "listd":
         import ssm_listd
         ssm_listd.run(args)
