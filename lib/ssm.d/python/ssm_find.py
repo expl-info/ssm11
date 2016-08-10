@@ -162,6 +162,9 @@ def run(args):
             #print "basedir", basedir
             dw = DirWalker(basedir, dirsonly=True)
             for dirpath in dw.next():
+                if os.path.basename(dirpath).startswith("."):
+                    dw.skip()
+                    continue
                 #print "dirpath", dirpath
                 dom = Domain(dirpath)
                 if dom.exists():
