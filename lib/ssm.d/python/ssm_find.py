@@ -10,6 +10,7 @@ import os
 import re
 import sys
 from sys import stderr, stdout
+import time
 import traceback
 
 from ssm import globls
@@ -97,6 +98,7 @@ def run(args):
         pkgpatt = None
         platpatt = None
         platforms = determine_platforms()
+        stats = False
 
         while args:
             arg = args.pop(0)
@@ -108,6 +110,8 @@ def run(args):
                 pkgpatt = args.pop(0)
             elif arg == "-pp" and args:
                 platpatt = args.pop(0)
+            elif arg == "--stats":
+                stats = True
             elif arg == "-t" and args:
                 findtypes = args.pop(0).split(",")
                 for name in findtypes:
@@ -136,6 +140,14 @@ def run(args):
     if not paths:
         paths = os.environ.get("SSMUSE_PATH", "").split(":")
 
+    stats_ndirs = 0
+    stats_ndomains = 0
+    stats_npkginsts = 0
+    stats_npkgpubs = 0
+    stats_ndommatches = 0
+    stats_npkgdoms = 0
+    stats_npkgmatches = 0
+
     domcre = None
     pkgcre = None
 
@@ -143,6 +155,7 @@ def run(args):
     pkgcre = pkgpatt and re.compile(fnmatch.translate(pkgpatt))
 
     if globls.debug:
+        print "stats", stats
         print "paths", paths
         print "displayfmt", displayfmt
         print "dompatt", dompatt
@@ -157,6 +170,7 @@ def run(args):
     _, displaywidth = get_terminal_size()
 
     try:
+        t0 = time.time()
         dom = None
         for basedir in paths:
             #print "basedir", basedir
@@ -165,12 +179,17 @@ def run(args):
                 if os.path.basename(dirpath).startswith("."):
                     dw.skip()
                     continue
+                stats_ndirs += 1
                 #print "dirpath", dirpath
                 dom = Domain(dirpath)
                 if dom.exists():
+                    stats_ndomains += 1
                     dw.skip()
+
                     if not dompatt \
                         or (domcre and domcre.match(dom.path)):
+                        stats_ndommatches += 1
+
                         if "package" not in findtypes:
                             if displayfmt == "csv":
                                 print dom.path
@@ -179,12 +198,17 @@ def run(args):
                             continue
 
                         installeds = dom.get_installeds(platforms)
+                        stats_npkginsts += len(installeds)
                         name2installeds = dict([(pkg.name, pkg) for pkg in installeds
                             if not pkgcre or pkgcre.match(pkg.name)])
+
                         publisheds = dom.get_publisheds(platforms)
+                        stats_npkgpubs += len(publisheds)
                         name2publisheds = dict([(pkg.name, pkg) for pkg in publisheds
                             if not pkgcre or pkgcre.match(pkg.name)])
+
                         allnames = set(name2installeds.keys()).union(name2publisheds.keys())
+                        stats_npkgmatches += len(allnames)
 
                         recs = []
                         for pname in sorted(allnames):
@@ -199,6 +223,8 @@ def run(args):
                             recs.append(("".join(status), pname))
                             #print "package  %s  %s" % ("".join(status), pname)
                         if recs:
+                            stats_npkgdoms += 1
+
                             if displayfmt == "csv":
                                 for rec in recs:
                                     print "%s,%s,%s" % (dom.path, rec[0], rec[1])
@@ -209,6 +235,20 @@ def run(args):
                                 print "----- domain (%s) -----" % (dom.path,)
                                 print "\n".join(columnize(lines, displaywidth, 2))
                                 print
+
+        if stats:
+            stats_elapsedtime = time.time()-t0
+
+            fmt = "%-25s: %s"
+            print fmt % ("elapsed time", stats_elapsedtime)
+            print fmt % ("total dirs", stats_ndirs)
+            print fmt % ("total domains", stats_ndomains)
+            print fmt % ("total domain matches", stats_ndommatches)
+            #print fmt % ("total packages", stats_npackages)
+            print fmt % ("total installed packages", stats_npkginsts)
+            print fmt % ("total published packages", stats_npkgpubs)
+            print fmt % ("total package matches", stats_npkgmatches)
+            print fmt % ("total package domains", stats_npkgdoms)
     except SystemExit:
         raise
     except:
