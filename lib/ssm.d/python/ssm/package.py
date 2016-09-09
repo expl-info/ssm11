@@ -84,7 +84,7 @@ class Package:
             if not os.access(path, os.X_OK):
                 raise Exception("script (%s) is not executable" % (path,))
 
-            env = os.environ[:]
+            env = os.environ.copy()
             if env.get("SSM_OLD_PREPOST"):
                 cmd.insert(0, "/bin/sh")
 
