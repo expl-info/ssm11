@@ -67,6 +67,9 @@ class PackageFile:
         self.filename = os.path.basename(path)
         self.name = self.filename[:-4]
 
+    def exists(self):
+        return os.path.exists(self.path)
+
     def is_valid(self):
         try:
             tarf = None
