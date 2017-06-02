@@ -37,7 +37,7 @@ Package management:
     ssm install|publish|uninstall|unpublish [<args>]
         
 Domain management:
-    ssm created|upgraded [<args>]
+    ssm cloned|created|upgraded [<args>]
 
 Other:
     ssm version
@@ -59,6 +59,9 @@ if __name__ == "__main__":
         print_usage()
         sys.exit(0)
 
+    elif cmd == "cloned":
+        import ssm_cloned
+        ssm_cloned.run(args)
     elif cmd == "diffd":
         print("NIY")
     elif cmd == "find":
