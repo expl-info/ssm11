@@ -212,6 +212,20 @@ class Domain:
         except:
             return None
 
+    def get_published_short(self, name, platform=None):
+        try:
+            pkg = Package(name)
+            platform = platform or pkg.platform
+            root, dirnames, _ = oswalk1(os.path.join(self.published_path, platform))
+            for dirname in dirnames:
+                ppkg = Package(os.path.join(root, dirname))
+                if pkg.short == ppkg.short:
+                    if ppkg.exists():
+                        return ppkg
+                    return None
+        except:
+            return None
+
     def get_published_platforms(self):
         root, platforms, _ = oswalk1(self.published_path)
         return platforms
