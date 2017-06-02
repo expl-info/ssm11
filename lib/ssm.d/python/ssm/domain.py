@@ -176,6 +176,28 @@ class Domain:
             pkgs = [pkg for pkg in pkgs if pkg.platform in platforms]
         return pkgs
 
+    def get_inventory(self):
+        d = {}
+        d["path"] = self.path
+        d["meta"] = self.__get_meta()
+        installed = {}
+        for plat in os.listdir(self.installed_path):
+            root = os.path.join(self.installed_path, plat)
+            for name in os.listdir(root):
+                path = os.path.join(root, name)
+                installed[name] = os.readlink(path)
+        d["installed"] = installed
+        published = {}
+        for plat in os.listdir(self.published_path):
+            platpublished = {}
+            root = os.path.join(self.published_path, plat)
+            for name in os.listdir(root):
+                path = os.path.join(root, name)
+                platpublished[name] = os.readlink(path)
+            published[plat] = platpublished
+        d["published"] = published
+        return d
+
     def get_label(self):
         meta = self.__get_meta()
         if meta == None:
