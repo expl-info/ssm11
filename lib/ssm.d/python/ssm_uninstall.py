@@ -24,6 +24,7 @@
 """Provides the uninstall subcommand.
 """
 
+import os.path
 import sys
 from sys import stderr
 import traceback
@@ -36,15 +37,16 @@ from ssm.misc import exits
 
 def print_usage():
     print("""\
-usage: ssm uninstall [<options>] (-d <dompath> -p <pkgname>)|-f <pkgpath>
+usage: ssm uninstall [<options>] -d <dompath> -p <pkgname>
+       ssm uninstall [<options>] -f <pkgpath>
        ssm uninstall -h|--help
 
 Install package to domain.
 
 Where:
 -d <dompath>    Domain path
--p <pkgname>    Package name
 -f <pkgpath>    Package path
+-p <pkgname>    Package name
 
 Options:
 --debug         Enable debugging
@@ -61,8 +63,10 @@ def run(args):
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
+                pkgpath = None
             elif arg == "-f" and args:
                 pkgpath = args.pop(0)
+                dompath = None
                 pkgname = None
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
@@ -81,6 +85,13 @@ def run(args):
                 globls.verbose = True
             else:
                 raise Exception()
+
+        if pkgpath:
+            dompath, pkgname = os.path.split(pkgpath)
+            dompath = dompath or "."
+
+        if not dompath or not pkgname:
+            raise Exception()
     except SystemExit:
         raise
     except:
@@ -88,17 +99,10 @@ def run(args):
             traceback.print_exc()
         exits("error: bad/missing arguments")
 
-    if not dompath \
-        or (not pkgname and not pkgfpath):
-        exits("error: bad/missing arguments")
-
     try:
         if dompath:
             dom = Domain(dompath)
             pkg = dom.get_installed(pkgname)
-        else:
-            pkg = Package(pkgpath)
-            dom = pkg.get_domain()
 
         if not dom.exists() or pkg == None:
             exits("error: cannot find domain/package")

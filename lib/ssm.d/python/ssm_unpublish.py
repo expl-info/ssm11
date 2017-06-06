@@ -25,6 +25,7 @@
 """
 
 import os
+import os.path
 import sys
 from sys import stderr
 import traceback
@@ -38,12 +39,14 @@ from ssm.package import determine_platform, Package
 def print_usage():
     print("""\
 usage: ssm publish [<options>] -d <dompath> -p <pkgname>
+       ssm publish [<options>] -f <pkgpath>
        ssm publish -h|--help
 
 Unpublish package from domain.
 
 Where:
 -d <dompath>    Domain path
+-f <pkgpath>    Package path
 -p <pkgname>    Package name found in repository
 
 Options:
@@ -58,14 +61,21 @@ def run(args):
     try:
         dompath = None
         pkgname = None
+        pkgpath = None
         pubplat = None
 
         while args:
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
+                pkgpath = None
+            elif arg == "-f" and args:
+                pkgpath = args.pop(0)
+                dompath = None
+                pkgname = None
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
+                pkgpath = None
             elif arg == "-pp" and args:
                 pubplat = args.pop(0)
 
@@ -80,15 +90,18 @@ def run(args):
                 globls.verbose = True
             else:
                 raise Exception()
+
+        if pkgpath:
+            dompath, pkgname = os.path.split(pkgpath)
+            dompath = dompath or "."
+
+        if not dompath or not pkgname:
+            raise Exception()
     except SystemExit:
         raise
     except:
         if globls.debug:
             traceback.print_exc()
-        exits("error: bad/missing arguments")
-
-    if not dompath \
-        or not pkgname:
         exits("error: bad/missing arguments")
 
     try:
