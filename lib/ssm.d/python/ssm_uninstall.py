@@ -44,9 +44,8 @@ usage: ssm uninstall [<options>] -d <dompath> -p <pkgname>
 Install package to domain.
 
 Where:
--d <dompath>    Domain path
--f <pkgpath>    Package path
--p <pkgname>    Package name
+<dompath>       Domain path
+<pkgname>       Package name
 
 Options:
 --debug         Enable debugging

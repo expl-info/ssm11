@@ -47,7 +47,7 @@ usage: ssm upgraded [<options>] -d <dompath>
 Upgrade domain to current version.
 
 Where:
--d <dompath>    Path for domain
+<dompath>       Path for domain
 
 Options:
 --debug         Enable debugging

@@ -45,7 +45,7 @@ usage: ssm inv [<options>] -d <dompath>
 Take an inventory of a domain and return a JSON object. 
 
 Where:
--d <dompath>    Path for domain
+<dompath>       Path for domain
 
 --debug         Enable debugging
 --verbose       Enable verbose output""")

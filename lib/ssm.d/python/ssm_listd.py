@@ -45,7 +45,7 @@ List packages in a domain. Default is to show for current platform
 only.
 
 Where:
--d <dompath>    Path for domain
+<dompath>       Path for domain
 
 Options:
 -o <field>[,...]

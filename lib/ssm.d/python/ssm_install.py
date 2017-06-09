@@ -43,9 +43,9 @@ usage: ssm install [<options>] -d <dompath> (-p <pkgname>|-f <pkgfile>)
 Install package to domain.
 
 Where:
--d <dompath>    Domain path
--f <pkgfile>    Package file (ending in .ssm)
--p <pkgname>    Package name found in repository
+<dompath>       Domain path
+<pkgfile>       Package file (ending in .ssm)
+<pkgname>       Package name found in repository
 
 Options:
 -r <url>        Repository URL

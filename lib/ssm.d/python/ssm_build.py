@@ -87,10 +87,10 @@ package dependencies (for build and publish) are satisfied which
 means that unspecified package may be added to the build list.
 
 Where:
--b <bssmdir>    Directory containing bssm files
--d <dompath>    Domain path
--p <platform>   SSM platform to build for
--s <sourcesurl> URL where source files are located (BH_SOURCES_URL)
+<bssmdir>       Directory containing bssm files
+<dompath>       Domain path
+<platform>      SSM platform to build for
+<sourcesurl>    URL where source files are located (BH_SOURCES_URL)
 <pkgname>       Short form package name (not including version or
                 platform)
 

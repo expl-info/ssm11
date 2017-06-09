@@ -39,15 +39,15 @@ from ssm.package import determine_platform, Package
 def print_usage():
     print("""\
 usage: ssm publish [<options>] -d <dompath> -p <pkgname>
-       ssm publish [<options>] -f <pkgpath>
+       ssm publish [<options>] -p <pkgref>
        ssm publish -h|--help
 
 Unpublish package from domain.
 
 Where:
--d <dompath>    Domain path
--f <pkgpath>    Package path
--p <pkgname>    Package name found in repository
+<dompath>       Domain path
+<pkgname>       Package name
+<pkgpath>       Package path
 
 Options:
 -pp <platform>  Alternate platform to unpublish from; default is the

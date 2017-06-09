@@ -45,9 +45,8 @@ usage: ssm publish [<options>] -d <dompath> -p <pkgname>
 Publish package to domain.
 
 Where:
--d <dompath>    Domain path
--f <pkgpath>    Package path
--p <pkgname>    Package name found in repository
+<dompath>       Domain path
+<pkgname>       Package name found in repository
 
 Options:
 -pp <platform>  Alternate platform to publish to; default is the

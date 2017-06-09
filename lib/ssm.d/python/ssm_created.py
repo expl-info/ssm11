@@ -41,11 +41,12 @@ usage: ssm created [<options>] -d <dompath>
 Create a new domain at dompath.
 
 Where:
--d <dompath>    Path for domain
+<dompath>       Path for domain
+
+Options:
 -L <string>     Short label for domain
 -r <url>        Repository URL
 
-Options:
 --debug         Enable debugging
 --force         Force operation
 --verbose       Enable verbose output""")
