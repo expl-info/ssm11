@@ -38,7 +38,6 @@ from ssm.misc import exits
 def print_usage():
     print("""\
 usage: ssm uninstall [<options>] -d <dompath> -p <pkgname>
-       ssm uninstall [<options>] -f <pkgpath>
        ssm uninstall -h|--help
 
 Install package to domain.
@@ -56,20 +55,13 @@ def run(args):
     try:
         dompath = None
         pkgname = None
-        pkgpath = None
 
         while args:
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
-                pkgpath = None
-            elif arg == "-f" and args:
-                pkgpath = args.pop(0)
-                dompath = None
-                pkgname = None
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
-                pkgpath = None
             elif arg == "-r" and args:
                 repourl = args.pop(0)
 
@@ -84,10 +76,6 @@ def run(args):
                 globls.verbose = True
             else:
                 raise Exception()
-
-        if pkgpath:
-            dompath, pkgname = os.path.split(pkgpath)
-            dompath = dompath or "."
 
         if not dompath or not pkgname:
             raise Exception()
