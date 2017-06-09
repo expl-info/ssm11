@@ -34,7 +34,7 @@ from ssm import globls
 from ssm.domain import Domain
 from ssm.error import Error
 from ssm.misc import exits
-from ssm.package import determine_platform, Package
+from ssm.package import determine_platform, split_pkgref, Package
 
 def print_usage():
     print("""\
@@ -59,16 +59,25 @@ def run(args):
     try:
         dompath = None
         pkgname = None
+        pkgref = None
         pubplat = None
 
         while args:
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
+                pkgref = None
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
+                pkgref = None
             elif arg == "-pp" and args:
                 pubplat = args.pop(0)
+                pkgref = None
+            elif arg == "-x" and args:
+                pkgref = args.pop(0)
+                dompath = None
+                pkgname = None
+                pubplat = None
 
             elif arg in ["-h", "--help"]:
                 print_usage()
@@ -82,8 +91,15 @@ def run(args):
             else:
                 raise Exception()
 
+        if pkgref:
+            dompath, pkgname, pubplat = split_pkgref(pkgref)
+            dom = Domain(dompath)
+            pkg = dom.get_published_short(pkgname, pubplat)
+            pkgname = pkg.name
+
         if not dompath or not pkgname:
             raise Exception()
+
     except SystemExit:
         raise
     except:

@@ -60,6 +60,17 @@ def find_paths(basepath, relpath, cre):
             members.append(path)
     return members
 
+def split_pkgref(pkgref):
+    """Split pkgref into dompath, pkgname, platform.
+    """
+    try:
+        pkgref = pkgref.rstrip("/")
+        dompath, pkgname = pkgref.rsplit("/", 1)
+        _, platform = pkgname.rsplit("_", 1)
+    except:
+        return None
+    return dompath, pkgname, platform
+
 class Package:
 
     def __init__(self, path):

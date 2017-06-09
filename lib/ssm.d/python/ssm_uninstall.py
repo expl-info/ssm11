@@ -32,7 +32,7 @@ import traceback
 from ssm import globls
 from ssm.domain import Domain
 from ssm.error import Error
-from ssm.package import Package
+from ssm.package import split_pkgref, Package
 from ssm.misc import exits
 
 def print_usage():
@@ -55,15 +55,20 @@ def run(args):
     try:
         dompath = None
         pkgname = None
+        pkgref = None
 
         while args:
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
+                pkgref = None
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
+                pkgref = None
             elif arg == "-r" and args:
                 repourl = args.pop(0)
+            elif arg == "-x" and args:
+                pkgref = args.pop(0)
 
             elif arg in ["-h", "--help"]:
                 print_usage()
@@ -76,6 +81,9 @@ def run(args):
                 globls.verbose = True
             else:
                 raise Exception()
+
+        if pkgref:
+            dompath, pkgname, _ = split_pkgref(pkgref)
 
         if not dompath or not pkgname:
             raise Exception()
