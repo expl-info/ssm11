@@ -77,6 +77,7 @@ Patterns support wildcards: * (zero or more) and ? (single) character
 match.
 
 Options:
+-1              Output in single column
 -d <pattern>    Domain path pattern; default is match all (*).
 -p <pattern>    Package name pattern; default is match all (*)
 -pp <pattern>   Platform pattern; default is list taken from
@@ -98,11 +99,14 @@ def run(args):
         pkgpatt = None
         platpatt = None
         platforms = determine_platforms()
+        onecolumn = False
         stats = False
 
         while args:
             arg = args.pop(0)
-            if arg == "-d" and args:
+            if arg == "-1":
+                onecolumn = True
+            elif arg == "-d" and args:
                 dompatt = args.pop(0)
             elif arg == "--fmt" and args:
                 displayfmt = args.pop(0)
@@ -167,7 +171,10 @@ def run(args):
         print "platforms", platforms
 
     fmt = "%-4s  %-30s"
-    _, displaywidth = get_terminal_size()
+    if onecolumn:
+        displaywidth = 1
+    else:
+        _, displaywidth = get_terminal_size()
 
     try:
         t0 = time.time()
