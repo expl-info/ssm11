@@ -33,7 +33,7 @@ def columnize(lines, displaywidth=80, gapwidth=2):
     _lines = []
     gap = " "*gapwidth
     maxwidth = max(map(len, lines))
-    ncols = displaywidth/(maxwidth+gapwidth)
+    ncols = 1+max(0, (displaywidth-maxwidth)/(gapwidth+maxwidth))
     fmt = "%%-%ss" % (maxwidth+gapwidth,)
     col = 0
     _line = []
