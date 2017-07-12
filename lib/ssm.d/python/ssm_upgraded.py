@@ -140,8 +140,7 @@ def upgrade_legacy(dompath, components):
                 "repository": misc.gets(sources_path),
                 "version": constants.SSM_VERSION,
             }
-            if globls.verbose:
-                print "setting domain metadata"
+            print "upgrading domain metadata"
             err = dom.create(meta, True)
             if err:
                 exits(err)
@@ -163,10 +162,10 @@ def upgrade_legacy(dompath, components):
                     except:
                         exits("warning: could generate create control file from name (%s)" % (name,))
                 else:
-                    if globls.verbose:
-                        print "upgrading control file"
                     d = upgrade_legacy_control(control_path)
+
                 control_path += ".json"
+                print "upgrading package control file (%s)" % (control_path,)
                 if not misc.puts(control_path, json.dumps(d, indent=2, sort_keys=True)):
                     exits("cannot write new control file")
 
@@ -179,8 +178,7 @@ def upgrade_legacy(dompath, components):
             for pkgpath in pkgpaths:
                 pkg = Package(pkgpath)
                 if pkg.exists():
-                    if globls.verbose:
-                        print "upgrading installed setting for package (%s)" % (pkg,)
+                    print "upgrading installed setting for package (%s)" % (pkg,)
                     dom._Domain__set_installed(pkg)
 
         if "published" in components:
@@ -193,29 +191,26 @@ def upgrade_legacy(dompath, components):
                 for pkgpath in pkgpaths:
                     pkg = Package(pkgpath)
                     if pkg.exists():
-                        if globls.verbose:
-                            print "upgrading published setting for package (%s)" % (pkg,)
+                        print "upgrading published setting for package (%s)" % (pkg,)
                         dom._Domain__set_published(pkg)
 
         if "old-files" in components:
-            if globls.verbose:
-                "cleaning up old files"
             # delete old files
             paths = [label_path, login_path, profile_path, sources_path,
                 subdomains_path, version_path]
             for path in paths:
                 try:
+                    print "removing old file (%s)" % (path,)
                     misc.remove(path)
                 except:
                     pass
 
         if "old-dirs" in components:
-            if globls.verbose:
-                "cleaning up old dirs"
             # delete old dirs
             paths = [domainhomes_dir, platforms_dir]
             for path in paths:
                 try:
+                    print "removing old directory (%s)" % (path,)
                     misc.rmtree(path)
                 except:
                     pass
