@@ -21,6 +21,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
-SSM_VERSION = "11.0"
+SSM_VERSION = "11.4"
 
 PUBLISHABLE_DIRS = ["bin", "etc/profile.d", "include", "lib", "man", "share"]
