@@ -97,6 +97,9 @@ def run(args):
 
     try:
         dom = Domain(dompath)
+        if not dom.exists():
+            exits("error: cannot find domain")
+
         if legacy == True or dom.is_legacy():
             upgrade_legacy(dompath, components)
         else:
