@@ -63,7 +63,7 @@ def run(args):
         components = ["meta", "control", "installed", "published", "old-files", "old-dirs"]
         dompath = None
         legacy = None
-        globls.verbose = True
+        globls.verbose = False
 
         while args:
             arg = args.pop(0)
