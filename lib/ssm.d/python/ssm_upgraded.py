@@ -50,6 +50,10 @@ Where:
 <dompath>       Path for domain
 
 Options:
+-c <name>[,...] Component names that need upgrading. The default is
+                all: meta,control,installed,published,old-files,old-dirs.
+--legacy        Upgrade applies to a legacy domain (v10 and before).
+
 --debug         Enable debugging
 --force         Force operation
 --verbose       Enable verbose output""")
