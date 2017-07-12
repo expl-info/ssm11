@@ -27,13 +27,18 @@ import string
 
 class Control:
 
-    def __init__(self, path):
+    def __init__(self, path, autoload=True):
         path = os.path.realpath(path)
         self.path = path
-        if os.path.exists(path):
-            self.json = json.load(open(path))
-        else:
-            self.json = self.legacy2json()
+        self.d = {}
+        if autoload:
+            self.load()
+
+    def exists(self):
+        return os.path.exists(self.path)
+
+    def get(self, k, default=None):
+        return self.d.get(k, default)
 
     def legacy2json(self):
         try:
@@ -57,3 +62,14 @@ class Control:
             pass
         return j
 
+    def load(self):
+        if self.exists():
+            self.d = json.load(open(self.path))
+        elif os.path.exists(self.path[:-4]):
+            self.d = self.legacy2json()
+
+    def set(self, k, v):
+        self.d[k] = v
+
+    def store(self):
+        json.dump(self.d, open(self.path, "w"), indent=2, sort_keys=True)

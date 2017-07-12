@@ -26,6 +26,8 @@ import os.path
 from ssm.packagefile import PackageFile
 
 class Repository:
+    """Manages access to a collection of packages.
+    """
 
     def __init__(self, url):
         self.url = url
