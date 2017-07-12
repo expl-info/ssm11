@@ -40,9 +40,20 @@ class Control:
     def get(self, k, default=None):
         return self.d.get(k, default)
 
-    def legacy2json(self):
+    def load(self):
+        if self.exists():
+            self.d = json.load(open(self.path))
+
+    def load_legacy(self):
+        def put(d, k, v):
+            if k == "description":
+                d["summary"] = v[0]
+                # trim leading space
+                v = [x[1:] for x in v[1:]]
+            d[k] = "\n".join(v)
+
         try:
-            j = {}
+            d = {}
             path = os.path.join(os.path.dirname(self.path), "control")
             if os.path.exists(path):
                 k = None
@@ -51,22 +62,23 @@ class Control:
                     if line.startswith(" "):
                         v.append(line)
                     else:
-                        if k != None:
-                            j[k] = "\n".join(v)
-                        t = map(string.strip, line.split(":", 1))
-                        k = t[0].lower()
-                        v = [t[1]]
+                        line = line.strip()
+                        if line == "":
+                            continue
+                        else:
+                            if k != None:
+                                put(d, k, v)
+                            t = map(string.strip, line.split(":", 1))
+                            k = t[0].lower().replace(" ", "-")
+                            if k == "package":
+                                k = "name"
+                            v = [t[1]]
                 if k != None:
-                    j[k] = "\n".join(v)
+                    put(d, k, v)
         except:
-            pass
-        return j
-
-    def load(self):
-        if self.exists():
-            self.d = json.load(open(self.path))
-        elif os.path.exists(self.path[:-4]):
-            self.d = self.legacy2json()
+            if globls.debug:
+                traceback.print_exc()
+        self.d = d
 
     def set(self, k, v):
         self.d[k] = v

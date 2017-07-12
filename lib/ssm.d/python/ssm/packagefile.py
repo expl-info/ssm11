@@ -31,40 +31,6 @@ from ssm import globls
 from ssm import misc
 from ssm.error import Error
 
-def upgrade_legacy_control(path):
-    def put(d, k, v):
-        if k == "description":
-            d["summary"] = v[0]
-            v = v[1:]
-        d[k] = "\n".join(v)
-
-    try:
-        d = {}
-        if os.path.exists(path):
-            k = None
-            v = []
-            for line in open(path):
-                if line.startswith(" "):
-                    v.append(line)
-                else:
-                    line = line.strip()
-                    if line == "":
-                        continue
-                    else:
-                        if k != None:
-                            put(d, k, v)
-                        t = map(string.strip, line.split(":", 1))
-                        k = t[0].lower().replace(" ", "-")
-                        if k == "package":
-                            k = "name"
-                        v = [t[1]]
-            if k != None:
-                put(d, k, v)
-    except:
-        if globls.debug:
-            traceback.print_exc()
-    return d
-
 class PackageFile:
 
     def __init__(self, path):
