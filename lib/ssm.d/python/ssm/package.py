@@ -28,6 +28,7 @@ import re
 import subprocess
 import traceback
 
+from ssm.control import Control
 from ssm.error import Error
 from ssm.misc import oswalk1, puts
 
@@ -116,7 +117,7 @@ class Package:
         return os.path.exists(self.path)
 
     def get_control(self):
-        return json.load(open(self.control_path))
+        return Control(self.control_path)
 
     def get_domain(self):
         from ssm.domain import Domain
@@ -124,6 +125,3 @@ class Package:
 
     def get_members(self, pattern=None):
         return find_paths(self.path, "", re.compile(pattern or ".*"))
-
-    def set_control(self, d):
-        puts(self.control_path, json.dumps(d, indent=2, sort_keys=True))

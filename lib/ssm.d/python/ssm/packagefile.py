@@ -29,6 +29,7 @@ import traceback
 
 from ssm import globls
 from ssm import misc
+from ssm.control import Control
 from ssm.error import Error
 
 class PackageFile:
@@ -71,27 +72,24 @@ class PackageFile:
                 tarf.close()
 
         try:
-            # upgrade legacy control file
+            # upgrade legacy control file (if necessary)
             control_path = os.path.join(dstpath, self.name, ".ssm.d/control.json")
-            legacy_control_path = os.path.join(dstpath, self.name, ".ssm.d/control")
-
-            if not os.path.exists(control_path):
-                if not os.path.exists(legacy_control_path):
+            control = Control(control_path)
+            if not control.exists():
+                control.load_legacy()
+                if control.get("name") == None:
                     return Error("missing control file")
-                d = upgrade_legacy_control(legacy_control_path)
-                if not misc.puts(control_path, json.dumps(d, indent=2, sort_keys=True)):
-                    return Error("cannot write new control file")
-            else:
-                d = json.load(open(control_path))
 
-            ft = self.name.split("_", 2)
-            ct = d.get("name"), d.get("version"), d.get("platform")
-            if ct[0] != ft[0]:
-                return Error("bad control file name mismatch (%s, %s)" % (ct[0], ft[0]))
-            if ct[1] != ft[1]:
-                return Error("bad control file version mismatch (%s, %s)" % (t[1], ft[1]))
-            if ct[2] != ft[2]:
-                return Error("bad control file platform mismatch (%s, %s)" % (ct[2], ft[2]))
+                ft = self.name.split("_", 2)
+                ct = control.get("name"), control.get("version"), control.get("platform")
+                if ct[0] != ft[0]:
+                    return Error("bad control file name mismatch (%s, %s)" % (ct[0], ft[0]))
+                if ct[1] != ft[1]:
+                    return Error("bad control file version mismatch (%s, %s)" % (t[1], ft[1]))
+                if ct[2] != ft[2]:
+                    return Error("bad control file platform mismatch (%s, %s)" % (ct[2], ft[2]))
+
+                control.store()
         except:
             if globls.debug:
                 traceback.print_exc()

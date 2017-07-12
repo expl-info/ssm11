@@ -33,11 +33,11 @@ import traceback
 from ssm import constants
 from ssm import globls
 from ssm import misc
+from ssm.control import Control
 from ssm.domain import Domain
 from ssm.error import Error
 from ssm.misc import exits
 from ssm.package import Package
-from ssm.packagefile import upgrade_legacy_control
 
 def print_usage():
     print("""\
@@ -149,24 +149,24 @@ def upgrade_legacy(dompath, components):
             names = [name for name in os.listdir(installed_dir) if not name.startswith(".")]
             for name in names:
                 pkgpath = os.path.join(installed_dir, name)
-                control_path = os.path.join(pkgpath, ".ssm.d/control")
-                if not os.path.exists(control_path):
-                    print "warning: generating control file from name (%s)" % (name,)
-                    try:
-                        t = name.split("_", 2)
-                        d = {
-                            "name": t[0],
-                            "version": t[1],
-                            "platform": t[2],
-                        }
-                    except:
-                        exits("warning: could generate create control file from name (%s)" % (name,))
-                else:
-                    d = upgrade_legacy_control(control_path)
+                control_path = os.path.join(pkgpath, ".ssm.d/control.json")
+                control = Control(control_path)
+                if not control.exists():
+                    control.load_legacy()
+                    if control.get("name") == None:
+                        print "warning: generating control file from name (%s)" % (name,)
+                        try:
+                            t = name.split("_", 2)
+                            control.set("name", t[0])
+                            control.set("version", t[1])
+                            control.set("platform", t[2])
+                        except:
+                            exits("warning: could generate create control file from name (%s)" % (name,))
 
-                control_path += ".json"
                 print "upgrading package control file (%s)" % (control_path,)
-                if not misc.puts(control_path, json.dumps(d, indent=2, sort_keys=True)):
+                try:
+                    control.store()
+                except:
                     exits("cannot write new control file")
 
         if "installed" in components:
