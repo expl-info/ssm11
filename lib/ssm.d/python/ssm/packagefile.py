@@ -51,7 +51,8 @@ class PackageFile:
                 if not member.startswith(self.name):
                     return False
         except:
-            traceback.print_exc()
+            if globls.debug:
+                traceback.print_exc()
             return False
         finally:
             if tarf:
