@@ -179,12 +179,6 @@ class Domain:
         d["published"] = published
         return d
 
-    def get_label(self):
-        meta = self.get_meta()
-        if meta == None:
-            return Error("cannot get label")
-        return meta.get("label", "")
-
     def get_meta(self, force=False):
         if self.meta == None or force:
             self.meta = Meta(self.meta_path)
@@ -239,12 +233,6 @@ class Domain:
             return Error("cannot get repository")
         return meta.get("repository", "")
 
-    def get_version(self):
-        meta = self.get_meta()
-        if meta == None:
-            return Error("cannot get version")
-        return meta.get("version", "")
-
     def get_version_legacy(self):
         return gets(os.path.join(self.path, "etc/ssm.d/version"))
 
@@ -280,18 +268,6 @@ class Domain:
             if ppkg and ppkg.path == pkg.path:
                 return True
         return False
-
-    def set_label(self, s):
-        if self.update_meta(name, s) == None:
-            return Error("cannot set label")
-        
-    def set_repository(self, url):
-        if self.update_meta("repository", url) == None:
-            return Error("cannot set repository")
-
-    def set_version(self, s):
-        if self.update_meta("version", s) == None:
-            return Error("cannot set version")
 
     # high-level operations
     def create(self, metadata, force=False):
