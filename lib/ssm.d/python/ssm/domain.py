@@ -244,7 +244,7 @@ class Domain:
         meta = self.__get_meta()
         if meta == None:
             return Error("cannot get repository")
-        return meta.get("respository", "")
+        return meta.get("repository", "")
 
     def get_version(self):
         meta = self.__get_meta()
