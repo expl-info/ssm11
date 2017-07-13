@@ -21,28 +21,15 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
-import json
 import os.path
 import string
 
-class Control:
+from ssm.jsonfile import JsonFile
 
-    def __init__(self, path, autoload=True):
-        path = os.path.realpath(path)
-        self.path = path
-        self.d = {}
-        if autoload:
-            self.load()
+class Control(JsonFile):
 
-    def exists(self):
-        return os.path.exists(self.path)
-
-    def get(self, k, default=None):
-        return self.d.get(k, default)
-
-    def load(self):
-        if self.exists():
-            self.d = json.load(open(self.path))
+    def __init__(self, *args, **kwargs):
+        JsonFile.__init__(self, *args, **kwargs)
 
     def load_legacy(self):
         def put(d, k, v):
@@ -79,9 +66,3 @@ class Control:
             if globls.debug:
                 traceback.print_exc()
         self.d = d
-
-    def set(self, k, v):
-        self.d[k] = v
-
-    def store(self):
-        json.dump(self.d, open(self.path, "w"), indent=2, sort_keys=True)
