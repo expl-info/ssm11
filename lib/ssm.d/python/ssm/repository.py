@@ -41,3 +41,28 @@ class Repository:
 
     def get_url(self):
         return self.url
+
+class RepositoryGroup:
+    """Manage one or more Repository objects.
+
+    The get_packagefile() method corresponds to
+    Repository.get_packagefile().
+    """
+
+    def __init__(self, urls=None):
+        self.urls = []
+        self.repos = []
+        if urls:
+            for url in urls:
+                self.add_url(url)
+
+    def add_url(self, url):
+        self.urls.append(url)
+        self.repos.append(Repository(url))
+
+    def get_packagefile(self, name):
+        for repo in self.repos:
+            pkgf = repo.get_packagefile(name)
+            if pkgf:
+                return pkgf
+        return None

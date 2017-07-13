@@ -233,7 +233,7 @@ class Domain:
         if meta == None:
             return None
         repourl = meta.get("repository")
-        if repourl == None
+        if repourl == None:
             return None
         return RepositoryGroup([repourl])
 
