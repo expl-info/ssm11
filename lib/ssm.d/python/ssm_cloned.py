@@ -140,13 +140,13 @@ def run(args):
             label = label or srcinv["meta"].get("label", "")
 
             if not dstdom.exists():
-                meta = {
+                metadata = {
                     "label": label or "",
                     "repository": repourl,
                     "version": constants.SSM_VERSION,
                 }
                 print "creating dstdom (%s) ... " % (dstdom.path,),
-                err = dstdom.create(meta, globls.force)
+                err = dstdom.create(metadata, globls.force)
                 if err:
                     print "fail"
                     exits(err)

@@ -88,13 +88,13 @@ def run(args):
         exits("error: bad/missing arguments")
 
     try:
-        meta = {
+        metadata = {
             "label": label or "",
             "repository": repourl or "",
             "version": constants.SSM_VERSION,
         }
         dom = Domain(dompath)
-        err = dom.create(meta, globls.force)
+        err = dom.create(metadata, globls.force)
         if err:
             exits(err)
     except SystemExit:

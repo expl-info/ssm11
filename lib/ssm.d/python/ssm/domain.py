@@ -21,7 +21,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
-import json
 import os
 import os.path
 import sys
@@ -33,6 +32,7 @@ from ssm import globls
 from ssm.deps import DependencyManager
 from ssm import misc
 from ssm.error import Error
+from ssm.meta import Meta
 from ssm.misc import gets, oswalk1, puts
 from ssm.package import Package
 
@@ -50,10 +50,7 @@ class Domain:
 
     def __get_meta(self, force=False):
         if self.meta == None or force:
-            s = gets(self.meta_path)
-            if s == None:
-                return None
-            self.meta = json.loads(s)
+            self.meta = Meta(self.meta_path)
         return self.meta
 
     def __create_depmgr(self, platforms):
@@ -81,9 +78,6 @@ class Domain:
     def __set_installed_legacy(self, pkg):
         linkname = os.path.join(self.installed_path, pkg.name)
         misc.symlink(pkg.path, linkname, True)
-
-    def __set_meta(self, meta):
-        return puts(self.meta_path, json.dumps(meta, indent=2, sort_keys=True))
 
     def __set_published(self, pkg, platform=None):
         platform = platform or pkg.platform
@@ -113,12 +107,10 @@ class Domain:
         misc.remove(linkname)
 
     def __update_meta(self, name, value):
-        meta = self.__get_meta(True)
+        meta = self.__get_meta()
         if meta == None:
             return None
-        meta[name] = s
-        self.__set_meta(meta)
-        self.meta = meta
+        meta.setstore(name, value)
         return meta
 
     def exists(self):
@@ -179,7 +171,8 @@ class Domain:
     def get_inventory(self):
         d = {}
         d["path"] = self.path
-        d["meta"] = self.__get_meta()
+        # TODO: update to not reach into Meta
+        d["meta"] = self.__get_meta().d
         installed = {}
         for plat in os.listdir(self.installed_path):
             root = os.path.join(self.installed_path, plat)
@@ -307,14 +300,17 @@ class Domain:
             return Error("cannot set version")
 
     # high-level operations
-    def create(self, meta, force=False):
+    def create(self, metadata, force=False):
         if self.exists() and not force:
             return Error("domain already exists")
         for dirname in [".", "etc/ssm.d/broken", "etc/ssm.d/installed", "etc/ssm.d/published",]:
             path = os.path.join(self.path, dirname)
             if not os.path.isdir(path):
                 misc.makedirs(os.path.join(self.path, dirname))
-        self.__set_meta(meta)
+        meta = self.__get_meta()
+        for k, v in metadata.items():
+            meta.set(k, v)
+        meta.store()
 
     def install(self, pkgfile, force=False):
         if not self.is_owner():

@@ -135,13 +135,13 @@ def upgrade_legacy(dompath, components):
 
         if "meta" in components:
             # set meta file
-            meta = {
+            metadata = {
                 "label": misc.gets(label_path),
                 "repository": misc.gets(sources_path),
                 "version": constants.SSM_VERSION,
             }
             print "upgrading domain metadata"
-            err = dom.create(meta, True)
+            err = dom.create(metadata, True)
             if err:
                 exits(err)
 
