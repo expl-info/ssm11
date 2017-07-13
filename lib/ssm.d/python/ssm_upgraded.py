@@ -103,9 +103,9 @@ def run(args):
         if legacy == True or dom.is_legacy():
             upgrade_legacy(dompath, components)
         else:
-            version = dom.get_version()
-            if isinstance(version, Error):
-                exits(version)
+            meta = dom.get_meta()
+            if meta.get("version") == None:
+                exits(dom.get_version_legacy())
     except SystemExit:
         raise
     except:

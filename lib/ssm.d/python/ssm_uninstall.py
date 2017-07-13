@@ -101,7 +101,8 @@ def run(args):
 
         if not dom.exists() or pkg == None:
             exits("error: cannot find domain/package")
-        if isinstance(dom.get_version(), Error):
+        meta = dom.get_meta()
+        if meta.get("version") == None:
             exits("error: old domain not supported; you may want to upgrade")
 
         err = dom.uninstall(pkg)

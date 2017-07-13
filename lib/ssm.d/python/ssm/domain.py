@@ -254,8 +254,9 @@ class Domain:
 
     def is_legacy(self):
         if self.legacy == None:
-            version = self.get_version()
-            if isinstance(version, Error):
+            meta = self.get_meta()
+            version = meta.get("version")
+            if version == None:
                 version = self.get_version_legacy()
             if version and version[:2] in ["10", "9.", "8.", "7."]:
                 self.legacy = True

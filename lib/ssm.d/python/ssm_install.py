@@ -100,7 +100,8 @@ def run(args):
         dom = Domain(dompath)
         if not dom.exists():
             exits("error: cannot find domain")
-        if isinstance(dom.get_version(), Error):
+        meta = dom.get_meta()
+        if meta.get("version") == None:
             exits("error: old domain not supported; you may want to upgrade")
 
         if pkgname:

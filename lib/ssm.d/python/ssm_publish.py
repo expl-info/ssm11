@@ -113,12 +113,14 @@ def run(args):
         pubdom = Domain(pubdompath)
         if not dom.exists():
             exits("error: cannot find domain")
-        if isinstance(dom.get_version(), Error):
+        meta = dom.get_meta()
+        if meta.get("version") == None:
             exits("error: old domain not supported; you may want to upgrade")
 
         if not pubdom.exists():
             exits("error: cannot find publish domain")
-        if isinstance(pubdom.get_version(), Error):
+        pubmeta = pubdom.get_meta()
+        if pubmeta.get("version") == None:
             exits("error: old domain not supported; you may want to upgrade")
 
         pkg = dom.get_installed(pkgname)
