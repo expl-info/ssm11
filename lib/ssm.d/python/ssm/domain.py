@@ -48,11 +48,6 @@ class Domain:
         self.meta = None
         self.legacy = None
 
-    def __get_meta(self, force=False):
-        if self.meta == None or force:
-            self.meta = Meta(self.meta_path)
-        return self.meta
-
     def __create_depmgr(self, platforms):
         dm = DependencyManager()
         for pkg in self.get_publisheds(platforms):
@@ -105,13 +100,6 @@ class Domain:
         linkdir = os.path.join(self.published_path, platform)
         linkname = os.path.join(linkdir, pkg.name)      
         misc.remove(linkname)
-
-    def __update_meta(self, name, value):
-        meta = self.__get_meta()
-        if meta == None:
-            return None
-        meta.setstore(name, value)
-        return meta
 
     def exists(self):
         return os.path.isdir(self.path) \
@@ -172,7 +160,7 @@ class Domain:
         d = {}
         d["path"] = self.path
         # TODO: update to not reach into Meta
-        d["meta"] = self.__get_meta().d
+        d["meta"] = self.get_meta().d
         installed = {}
         for plat in os.listdir(self.installed_path):
             root = os.path.join(self.installed_path, plat)
@@ -192,10 +180,15 @@ class Domain:
         return d
 
     def get_label(self):
-        meta = self.__get_meta()
+        meta = self.get_meta()
         if meta == None:
             return Error("cannot get label")
         return meta.get("label", "")
+
+    def get_meta(self, force=False):
+        if self.meta == None or force:
+            self.meta = Meta(self.meta_path)
+        return self.meta
 
     def get_published(self, name, platform=None):
         try:
@@ -241,13 +234,13 @@ class Domain:
         return pkgs
 
     def get_repository(self):
-        meta = self.__get_meta()
+        meta = self.get_meta()
         if meta == None:
             return Error("cannot get repository")
         return meta.get("repository", "")
 
     def get_version(self):
-        meta = self.__get_meta()
+        meta = self.get_meta()
         if meta == None:
             return Error("cannot get version")
         return meta.get("version", "")
@@ -288,15 +281,15 @@ class Domain:
         return False
 
     def set_label(self, s):
-        if self.__update_meta(name, value) == None:
+        if self.update_meta(name, value) == None:
             return Error("cannot set label")
         
     def set_repository(self, url):
-        if self.__update_meta("repository", url) == None:
+        if self.update_meta("repository", url) == None:
             return Error("cannot set repository")
 
     def set_version(self, s):
-        if self.__update_meta("version", s) == None:
+        if self.update_meta("version", s) == None:
             return Error("cannot set version")
 
     # high-level operations
@@ -307,7 +300,7 @@ class Domain:
             path = os.path.join(self.path, dirname)
             if not os.path.isdir(path):
                 misc.makedirs(os.path.join(self.path, dirname))
-        meta = self.__get_meta()
+        meta = self.get_meta()
         for k, v in metadata.items():
             meta.set(k, v)
         meta.store()
@@ -431,3 +424,10 @@ class Domain:
             if globls.debug:
                 traceback.print_exc()
             return Error("unpublish was unsuccessful")
+
+    def update_meta(self, name, value):
+        meta = self.get_meta()
+        if meta == None:
+            return None
+        meta.setstore(name, value)
+        return meta
