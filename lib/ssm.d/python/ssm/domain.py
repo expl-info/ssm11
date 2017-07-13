@@ -35,6 +35,7 @@ from ssm.error import Error
 from ssm.meta import Meta
 from ssm.misc import gets, oswalk1, puts
 from ssm.package import Package
+from ssm.repository import RepositoryGroup
 
 class Domain:
 
@@ -230,8 +231,11 @@ class Domain:
     def get_repository(self):
         meta = self.get_meta()
         if meta == None:
-            return Error("cannot get repository")
-        return meta.get("repository", "")
+            return None
+        repourl = meta.get("repository")
+        if repourl == None
+            return None
+        return RepositoryGroup([repourl])
 
     def get_version_legacy(self):
         return gets(os.path.join(self.path, "etc/ssm.d/version"))

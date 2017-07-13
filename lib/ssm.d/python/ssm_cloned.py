@@ -35,6 +35,7 @@ from ssm.domain import Domain
 from ssm.misc import exits
 from ssm.package import Package
 from ssm.packagefile import PackageFile
+from ssm.repository import Repository
 
 def print_usage():
     print("""\
@@ -136,8 +137,9 @@ def run(args):
                 exits("error: no domain at srcdompath (%s)" % srcdompath)
 
             srcinv = srcdom.get_inventory()
-            repourl = repourl or srcinv["meta"].get("repository", "")
+            repourl = repourl or srcinv["meta"].get("repository")
             label = label or srcinv["meta"].get("label", "")
+            repo = Repository(repourl)
 
             if not dstdom.exists():
                 metadata = {
@@ -156,8 +158,8 @@ def run(args):
             print "source domain (%s)" % (srcdompath,)
 
             if installed:
-                if not repourl:
-                    exits("error: no repo url for installing packages")
+                if not repo:
+                    exits("error: no repository for installing packages")
 
                 pkgfiles = []
                 for pkgname in srcinv["installed"]:
@@ -166,10 +168,9 @@ def run(args):
                         # skip already installed package
                         continue
 
-                    pkgfpath = os.path.join(repourl, "%s.ssm" % pkgname)
-                    pkgf = PackageFile(pkgfpath)
+                    pkgf = repo.get_packagefile(pkgname)
                     if not pkgf.exists():
-                        exits("error: cannot find package (%s) in repo" % (pkgname,))
+                        exits("error: cannot find package (%s) in repository" % (pkgname,))
                     pkgfiles.append(pkgf)
 
                 for pkgf in pkgfiles:

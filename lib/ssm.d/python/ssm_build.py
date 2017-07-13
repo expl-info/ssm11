@@ -193,9 +193,10 @@ def run(args):
             exits("error: cannot find domain")
 
         if not repourl:
-            repourl = dom.get_repository()
-            if isinstance(repourl, Error):
-                exits(repourl)
+            repo = dom.get_repository()
+            if repo == None:
+                exits("error: no repository")
+            repourl = repo.get_url()
 
         builders = load_builders(workdir, bssmdir, sourcesurl, dompath, repourl, buildnames, platform, initfile, initpkg)
 

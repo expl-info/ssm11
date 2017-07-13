@@ -34,6 +34,7 @@ from ssm.domain import Domain
 from ssm.error import Error
 from ssm.misc import exits
 from ssm.packagefile import PackageFile
+from ssm.repository import RepositoryGroup
 
 def print_usage():
     print("""\
@@ -104,15 +105,21 @@ def run(args):
         if meta.get("version") == None:
             exits("error: old domain not supported; you may want to upgrade")
 
-        if pkgname:
-            if not repourl:
-                repourl = dom.get_repository()
-                if isinstance(repourl, Error):
-                    exits(repourl)
-            # TODO: add support for non-file urls
-            pkgfpath = os.path.join(repourl, pkgname+".ssm")
+        if pkgfpath:
+            pkgf = PackageFile(pkgfpath)
+        elif pkgname:
+            if repourl:
+                repo = RepositoryGroup([repourl])
+            else:
+                repo = dom.get_repository()
+                if repo == None:
+                    exits("error: no repository")
 
-        pkgf = PackageFile(pkgfpath)
+            pkgf = repo.get_packagefile(pkgname)
+
+        if pkgf == None:
+            exits("error: cannot find package")
+
         err = dom.install(pkgf, globls.force)
         if err:
             exits(err)
