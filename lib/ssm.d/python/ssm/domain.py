@@ -281,7 +281,7 @@ class Domain:
         return False
 
     def set_label(self, s):
-        if self.update_meta(name, value) == None:
+        if self.update_meta(name, s) == None:
             return Error("cannot set label")
         
     def set_repository(self, url):
