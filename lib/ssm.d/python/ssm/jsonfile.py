@@ -48,5 +48,9 @@ class JsonFile:
     def set(self, k, v):
         self.d[k] = v
 
+    def setstore(self, k, v):
+        self.set(k, v)
+        self.store()
+
     def store(self):
         json.dump(self.d, open(self.path, "w"), indent=2, sort_keys=True)
