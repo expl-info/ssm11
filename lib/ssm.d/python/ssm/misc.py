@@ -21,8 +21,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
+import grp
 import os
 import os.path
+import pwd
 import shutil
 import sys
 import traceback
@@ -74,6 +76,13 @@ def get_terminal_size(_nrows=24, _ncols=80):
     except:
         nrows, ncols = _nrows, _ncols
     return nrows, ncols
+
+def gid2groupname(gid):
+    try:
+        gr = grp.getgrgid(gid)
+        return gr.gr_name
+    except:
+        pass
 
 def isrealdir(path):
     return os.path.isdir(path) and not os.path.islink(path)
@@ -171,3 +180,10 @@ def symlink(src, linkname, force=False):
         if globls.debug:
              sys.stderr.write("%s\n" % traceback.format_exc())
         raise
+
+def uid2username(uid):
+    try:
+        pw = pwd.getpwuid(uid)
+        return pw.pw_name
+    except:
+        pass
