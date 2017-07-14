@@ -40,6 +40,7 @@ Domain management:
     ssm cloned|created|upgraded [<args>]
 
 Other:
+    ssm makepkg [<args>]
     ssm version
 
 For help, specify -h or --help to the command.
@@ -80,6 +81,9 @@ if __name__ == "__main__":
     elif cmd == "inv":
         import ssm_inv
         ssm_inv.run(args)
+    elif cmd == "makepkg":
+        import ssm_makepkg
+        ssm_makepkg.run(args)
     elif cmd == "publish":
         import ssm_publish
         ssm_publish.run(args)
