@@ -78,11 +78,11 @@ match.
 
 Options:
 -1              Output in single column
--d <pattern>    Domain path pattern; default is match all (*).
+-d <pattern>    Domain path pattern; default is match all (*)
 -p <pattern>    Package name pattern; default is match all (*)
 -pp <pattern>   Platform pattern; default is list taken from
                 SSM_PLATFORMS or SSMUSE_PLATFORMS
--t <type>[,...] Search for each type. Default is domain,package.
+-t <type>[,...] Search for each type. Default is domain,package
 
 --debug         Enable debugging
 --force         Force operation

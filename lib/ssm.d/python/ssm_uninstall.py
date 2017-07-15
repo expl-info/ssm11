@@ -40,7 +40,7 @@ def print_usage():
 usage: ssm uninstall [<options>] -d <dompath> -p <pkgname>
        ssm uninstall -h|--help
 
-Install package to domain.
+Uninstall package from domain.
 
 Where:
 <dompath>       Domain path

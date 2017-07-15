@@ -49,8 +49,8 @@ Where:
 <dir>           Directory to be packaged
 
 Options:
---auto-control  Generate minimal control.json. Overrides existing
-                control file information if available.
+--auto-control  Generate minimal control.json; overrides existing
+                control file information if available
 -p <pkgname>    Use an alternate package name; implies
                 --auto-control
 

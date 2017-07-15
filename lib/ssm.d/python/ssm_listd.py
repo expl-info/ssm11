@@ -41,7 +41,7 @@ def print_usage():
 usage: ssm listd [<options>] -d <dompath>
        ssm listd -h|--help
 
-List packages in a domain. Default is to show for current platform
+List packages in a domain. Default is to show for current platforms
 only.
 
 Where:

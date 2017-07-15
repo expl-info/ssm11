@@ -53,19 +53,19 @@ the same domain used in <srcdom>.
 By default, only --published-src is set. 
 
 Where:
-<dstdom>        Path of destination domain.
-<srcdom>        Path of source domain.
+<dstdom>        Path of destination domain
+<srcdom>        Path of source domain
 
 Options:
---installed     Clone installed packages.
---published     Clone published packages.
+--installed     Clone installed packages
+--published     Clone published packages
 --published-src Clone published packages from <srcdom> rather than
-                from <dstdom>. Defaults to on.
--L <string>     Short label for domain.
+                from <dstdom>. Defaults to on
+-L <string>     Short label for domain
 -pp <platform>[,..]
-                Limit the publishing to specific platforms.
+                Limit the publishing to specific platforms
 -r <url>        Alternate repository URL overriding the one from
-                <srcdom>.
+                <srcdom>
 --debug         Enable debugging
 --force         Force operation
 --verbose       Enable verbose output""")
