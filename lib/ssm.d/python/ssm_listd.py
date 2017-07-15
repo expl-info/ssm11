@@ -48,24 +48,6 @@ Where:
 <dompath>       Path for domain
 
 Options:
--o <field>[,...]
-                Print selected field information (:-separated):
-                domain - domain name
-                domain_owner - username of domain owner
-                domain_state - domain state (e.g., F for frozen)
-                domains - install and publish domains
-                install_domain - install domains
-                install_domain_owner - username of domain owner
-                install_domain_state - domain state
-                install_timestamp - time of package install
-                name - package name
-                publish_domain - domain name
-                publish_domain_owner - username of domain owner
-                publish_domain_state - domain state
-                publish_timestamp - time of package publish
-                state - package state (e.g., IPp?)
-                title - package title
-
 -p <pattern>    Package name pattern with * and ? wilcard support;
                 default is match all (*)
 -pp <pattern>   Platform pattern with * and ? wildcard support;
@@ -75,6 +57,24 @@ Options:
 --debug         Enable debugging
 --force         Force operation
 --verbose       Enable verbose output""")
+
+#-o <field>[,...]
+#                Print selected field information (:-separated):
+#                domain - domain name
+#                domain_owner - username of domain owner
+#                domain_state - domain state (e.g., F for frozen)
+#                domains - install and publish domains
+#                install_domain - install domains
+#                install_domain_owner - username of domain owner
+#                install_domain_state - domain state
+#                install_timestamp - time of package install
+#                name - package name
+#                publish_domain - domain name
+#                publish_domain_owner - username of domain owner
+#                publish_domain_state - domain state
+#                publish_timestamp - time of package publish
+#                state - package state (e.g., IPp?)
+#                title - package title
 
 def run(args):
     try:
@@ -89,8 +89,8 @@ def run(args):
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
-            elif arg == "-o" and args:
-                fields = args.pop(0).split(",")
+            #elif arg == "-o" and args:
+                #fields = args.pop(0).split(",")
             elif arg == "-p" and args:
                 pkgnamepat = args.pop(0)
             elif arg == "-pp" and args:
