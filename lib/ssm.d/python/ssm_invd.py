@@ -51,6 +51,7 @@ Warning:
 Where:
 <dompath>       Path for domain
 
+Options:
 --debug         Enable debugging
 --verbose       Enable verbose output""")
 
