@@ -106,6 +106,8 @@ def run(args):
             meta = dom.get_meta()
             if meta.get("version") == None:
                 exits(dom.get_version_legacy())
+
+            meta.setstore("version", constants.SSM_VERSION)
     except SystemExit:
         raise
     except:
