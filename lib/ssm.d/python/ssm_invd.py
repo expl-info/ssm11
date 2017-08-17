@@ -44,7 +44,9 @@ usage: ssm invd [<options>] -d <dompath>
 
 Take an inventory of a domain and return a JSON object.
 
-
+Warning:
+    The data format returned by this command may change between
+    releases. Do *not* depend on it remaining the same.
 
 Where:
 <dompath>       Path for domain
