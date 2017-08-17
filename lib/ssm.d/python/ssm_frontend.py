@@ -31,7 +31,7 @@ usage: ssm <cmd> [<args>]
 Simple Software Manager.
 
 List operations:
-    ssm inv|listd [<args>]
+    ssm invd|listd [<args>]
 
 Package management:
     ssm install|publish|uninstall|unpublish [<args>]
@@ -78,9 +78,9 @@ if __name__ == "__main__":
     elif cmd == "install":
         import ssm_install
         ssm_install.run(args)
-    elif cmd == "inv":
-        import ssm_inv
-        ssm_inv.run(args)
+    elif cmd == "invd":
+        import ssm_invd
+        ssm_invd.run(args)
     elif cmd == "makepkg":
         import ssm_makepkg
         ssm_makepkg.run(args)

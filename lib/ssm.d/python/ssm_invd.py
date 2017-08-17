@@ -39,10 +39,12 @@ from ssm.package import determine_platforms
 
 def print_usage():
     print("""\
-usage: ssm inv [<options>] -d <dompath>
-       ssm inv -h|--help
+usage: ssm invd [<options>] -d <dompath>
+       ssm invd -h|--help
 
-Take an inventory of a domain and return a JSON object. 
+Take an inventory of a domain and return a JSON object.
+
+
 
 Where:
 <dompath>       Path for domain
