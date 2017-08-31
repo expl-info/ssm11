@@ -163,7 +163,7 @@ def upgrade_legacy(dompath, components):
                             control.set("version", t[1])
                             control.set("platform", t[2])
                         except:
-                            exits("warning: could generate create control file from name (%s)" % (name,))
+                            exits("warning: could not generate create control file from name (%s)" % (name,))
 
                 print "upgrading package control file (%s)" % (control_path,)
                 try:
