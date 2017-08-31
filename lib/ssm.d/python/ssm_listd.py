@@ -139,7 +139,7 @@ def run(args):
         skip = False
         _, displaywidth = get_terminal_size()
         for platform in platforms:
-            ipkgs = dom.get_installeds(platform and [platform, "all", "multi"])
+            ipkgs = dom.get_installeds(platform and [platform])
             ppkgs = dom.get_publisheds(platform and [platform])
 
             name2ipkg = dict([(ipkg.name, ipkg) for ipkg in ipkgs])
