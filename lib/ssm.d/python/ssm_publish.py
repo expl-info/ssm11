@@ -126,12 +126,25 @@ def run(args):
         pkg = dom.get_installed(pkgname)
         if not pkg:
             exits("error: package not installed")
+
         pubplat = pubplat or determine_platform(pkg)
         if not pubplat:
             exits("error: cannot determine platform")
-        if pubdom.get_published(pkg.name, pubplat) and not globls.force:
-            # TODO: ask for permission
-            exits("error: package already published")
+        pubpkg = pubdom.get_published_short(pkg.name, pubplat)
+        if pubpkg:
+            deppkgs = pubdom.get_dependents(pubpkg, pubplat)
+            if isinstance(deppkgs, Error):
+                exits(deppkgs)
+            if len(deppkgs) > 1 and not globs.force:
+                depnames = [deppkg.name for deppkg in deppkgs]
+                print "found dependent packages: %s" % " ".join(depnames)
+                reply = raw_input("unpublish all (y/n)? ")
+                if reply != "y":
+                    exits("aborting operation")
+            for deppkg in deppkgs:
+                err = pubdom.unpublish(deppkg, pubplat)
+                if err:
+                    exits(err)
 
         err = pubdom.prepublish(pkg, pubplat)
         if isinstance(err, Error):
