@@ -117,6 +117,14 @@ def run(args):
     sys.exit(0)
 
 def upgrade_legacy(dompath, components):
+    def get_package_names(path):
+        names = []
+        for name in os.listdir(path):
+            t = name.split("_")
+            if len(t) == 3:
+                names.append(name)
+        return names
+
     try:
         dom = Domain(dompath)
 
@@ -148,7 +156,7 @@ def upgrade_legacy(dompath, components):
                 exits(err)
 
         if "control" in components:
-            names = [name for name in os.listdir(installed_dir) if not name.startswith(".")]
+            names = get_package_names(installed_dir)
             for name in names:
                 pkgpath = os.path.join(installed_dir, name)
                 control_path = os.path.join(pkgpath, ".ssm.d/control.json")
@@ -173,7 +181,7 @@ def upgrade_legacy(dompath, components):
 
         if "installed" in components:
             # update installed dir
-            names = [name for name in os.listdir(installed_dir) if not name.startswith(".")]
+            names = get_package_names(installed_dir)
             pkgpaths = [os.readlink(os.path.join(installed_dir, name)) for name in names]
             misc.rename(installed_dir, installed_dir+"-old")
             os.mkdir(installed_dir)
@@ -186,7 +194,7 @@ def upgrade_legacy(dompath, components):
         if "published" in components:
             if version[:2] in ["9.", "8.", "7."]:
                 # update published dir
-                names = [name for name in os.listdir(published_dir) if not name.startswith(".")]
+                names = get_package_names(published_dir)
                 pkgpaths = [os.readlink(os.path.join(published_dir, name)) for name in names]
                 misc.rename(published_dir, published_dir+"-old")
                 os.mkdir(published_dir)
