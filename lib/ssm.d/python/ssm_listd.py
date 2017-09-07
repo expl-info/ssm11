@@ -138,7 +138,7 @@ def run(args):
 
         skip = False
         _, displaywidth = get_terminal_size()
-        for platform in platforms:
+        for platform in sorted(platforms):
             ipkgs = dom.get_installeds(platform and [platform])
             ppkgs = dom.get_publisheds(platform and [platform])
 
