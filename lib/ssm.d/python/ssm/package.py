@@ -66,9 +66,11 @@ def split_pkgref(pkgref):
     """
     try:
         pkgref = pkgref.rstrip("/")
-        dompath, pkgname = pkgref.rsplit("/", 1)
-        if dompath == "":
-            dompath = "."
+        l = pkgref.rsplit("/", 1)
+        if len(l) == 2:
+            dompath, pkgname = l
+        else:
+            dompath, pkgname = ".", l[0]
         _, platform = pkgname.rsplit("_", 1)
     except:
         return None
