@@ -113,7 +113,7 @@ class Builder:
 
             # move to repo?
             pkgfpath = "%s/%s.ssm" % (os.getcwd(), self.name)
-            return pkgfpath, None
+            return pkgfpath
         except:
             traceback.print_exc()
             pass
@@ -125,7 +125,7 @@ class Builder:
                 os.close(initdotfd)
             self.__cleanbssm()
 
-        return None, Error("error: failed to build")
+        return Error("error: failed to build")
 
     def __get_from_domain(self):
         dom = Domain(self.dompath)
@@ -134,13 +134,11 @@ class Builder:
     def __get_from_repo(self):
         path = os.path.join(self.repourl, self.name+".ssm")
         if os.path.exists(path):
-            return path, None
-        else:
-            return None, Error("cannot find in repository")
+            return path
+        return Error("cannot find in repository")
 
     def run(self):
-        pkgfpath, err = self.__get_from_repo()
-        if not err:
-            return pkgfpath, None
-        pkgfpath, err = self.__build_from_source()
-        return pkgfpath, err
+        pkgfpath = err = self.__get_from_repo()
+        if not isinstance(err, Error):
+            return pkgfpath
+        return self.__build_from_source()

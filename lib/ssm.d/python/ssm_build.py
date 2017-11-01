@@ -229,8 +229,8 @@ def run(args):
                 pkgfpath = os.path.join(repourl, builder.name+".ssm")
                 if not os.path.exists(pkgfpath):
                     print "info: building package (%s)" % (builder.name,)
-                    pkgfpath, err = builder.run()
-                    if err:
+                    pkgfpath = err = builder.run()
+                    if isinstance(err, Error):
                         exits(err)
 
                 pkgf = PackageFile(pkgfpath)
