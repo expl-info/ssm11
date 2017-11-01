@@ -132,9 +132,9 @@ def run(args):
             exits("error: cannot determine platform")
         pubpkg = pubdom.get_published_short(pkg.name, pubplat)
         if pubpkg:
-            deppkgs = pubdom.get_dependents(pubpkg, pubplat)
-            if isinstance(deppkgs, Error):
-                exits(deppkgs)
+            deppkgs = err = pubdom.get_dependents(pubpkg, pubplat)
+            if isinstance(err, Error):
+                exits(err)
             if len(deppkgs) > 1 and not globs.force:
                 depnames = [deppkg.name for deppkg in deppkgs]
                 print "found dependent packages: %s" % " ".join(depnames)

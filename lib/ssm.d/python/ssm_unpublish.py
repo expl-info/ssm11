@@ -121,9 +121,9 @@ def run(args):
         pkg = dom.get_published(pkgname, pubplat)
         if not pkg:
             exits("error: package is not published")
-        deppkgs = dom.get_dependents(pkg, pubplat)
-        if isinstance(deppkgs, Error):
-            exits(deppkgs)
+        deppkgs = err = dom.get_dependents(pkg, pubplat)
+        if isinstance(err, Error):
+            exits(err)
         if len(deppkgs) > 1 and not globls.force:
             depnames = [deppkg.name for deppkg in deppkgs]
             print "found dependent packages: %s" % " ".join(depnames)
