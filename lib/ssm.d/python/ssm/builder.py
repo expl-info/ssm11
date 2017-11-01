@@ -87,34 +87,21 @@ class Builder:
                 os.write(initdotfd, ". ssmuse-sh -p %s\n" % self.initpkg)
 
             # build command to run
-            bargs = self.bcontrol.get("args") or []
-            benv = self.bcontrol.get("env") or {}
-            buildfile = os.path.join(self.bssmtmp, self.bcontrol["bh-script"])
-
-            args = [buildfile]+bargs
-            for k, v in env.items():
-                args.extend(["-v", "%s=%s" % (k, v)])
-            args.extend(["-v", "BH_INIT_DOT=%s" % initdotpath])
-            #args.extend(["--local"])
-            args.extend(["--host", "localhost"])
-            args.extend(["-p", self.platform])
-            args.extend(["-w", "%s/tmp" % os.getcwd()])
+            buildfile = os.path.join(self.bssmtmp, self.bcontrol.get("build-script", "build.sh"))
 
             # prep env for command
             env = os.environ[:]
-            #env["SSM_BUILD_BSSM_FILE"] = self.bssmpath
-            env["SSM_BUILD_BSSM_DIR"] = self.bssmtmp
             env["SSM_BUILD_BCONTROL_FILE"] = os.path.join(self.bssmtmp, "control.json")
+            env["SSM_BUILD_BSSM_DIR"] = self.bssmtmp
             env["SSM_BUILD_BUILD_FILE"] = buildfile
             env["SSM_BUILD_INIT_DOT"] = initdotpath
             env["SSM_BUILD_PACKAGE_NAME"] = self.bcontrol.get("name")
-            env["SSM_BUILD_PACKAGE_VERSION"] = self.bcontrol.get("version")
             env["SSM_BUILD_PACKAGE_PLATFORM"] = self.platform
-            #env["SSM_BUILD_REPOSITORIES"] = self.repourl
-            #env["SSM_BUILD_SOURCES"] = self.sourcesurl
-            env["SSM_BUILD_WORKDIR"] = self.workdir
+            env["SSM_BUILD_PACKAGE_VERSION"] = self.bcontrol.get("version")
+            env["SSM_BUILD_SOURCES_DIR"] = self.sourcesurl
+            env["SSM_BUILD_WORK_DIR"] = self.workdir
 
-            p = subprocess.Popen(args,
+            p = subprocess.Popen([buildfile],
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 shell=False,
