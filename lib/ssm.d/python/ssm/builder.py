@@ -80,7 +80,7 @@ class Builder:
 
             # setup initfile and initpkg
             initdotfd, initdotpath = tempfile.mkstemp(dir=self.workdir)
-            os.write(initdotfd, ". ssmuse-sh -d %s\n" % os.path.realpath(self.dompath))
+            os.write(initdotfd, ". ssmuse-sh -d %s\n" % os.path.abspath(self.dompath))
             if self.initfile:
                 os.write(initdotfd, ". %s\n" % self.initfile)
             if self.initpkg:

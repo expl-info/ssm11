@@ -40,8 +40,10 @@ from ssm.repository import RepositoryGroup
 class Domain:
 
     def __init__(self, path):
-        path = os.path.realpath(path)
-        self.path = path
+        self.path = os.path.abspath(path)
+        self.self_path = os.path.join(path, "etc/ssm.d/self")
+        if os.path.islink(self.self_path):
+            self.path = os.readlink(self.self_path)
         self.installed_path = os.path.join(self.path, "etc/ssm.d/installed")
         self.published_path = os.path.join(self.path, "etc/ssm.d/published")
         self.meta_path = os.path.join(self.path, "etc/ssm.d/meta.json")
@@ -142,16 +144,16 @@ class Domain:
         platforms = platforms or self.get_installed_platforms()
         pkgs = []
         for platform in platforms:
-            root, dirnames, _ = oswalk1(os.path.join(self.installed_path, platform))
+            _, dirnames, _ = oswalk1(os.path.join(self.installed_path, platform))
             for dirname in dirnames:
-                pkgs.append(Package(os.path.realpath(os.path.join(root, dirname))))
+                pkgs.append(Package(os.path.abspath(os.path.join(self.path, dirname))))
         return pkgs
 
     def get_installeds_legacy(self, platforms=None):
         pkgs = []
-        root, dirnames, _ = oswalk1(self.installed_path)
+        _, dirnames, _ = oswalk1(self.installed_path)
         for dirname in dirnames:
-            pkgs.append(Package(os.path.realpath(os.path.join(root, dirname))))
+            pkgs.append(Package(os.path.abspath(os.path.join(self.path, dirname))))
         if platforms:
             platforms = dict([(platform, None) for platform in platforms])
             pkgs = [pkg for pkg in pkgs if pkg.platform in platforms]
@@ -208,7 +210,7 @@ class Domain:
             return None
 
     def get_published_platforms(self):
-        root, platforms, _ = oswalk1(self.published_path)
+        _, platforms, _ = oswalk1(self.published_path)
         return platforms
 
     def get_publisheds(self, platforms=None):
@@ -217,12 +219,12 @@ class Domain:
         for platform in platforms:
             root, dirnames, _ = oswalk1(os.path.join(self.published_path, platform))
             for dirname in dirnames:
-                pkgs.append(Package(os.path.realpath(os.path.join(root, dirname))))
+                pkgs.append(Package(os.path.abspath(os.path.join(root, dirname))))
         return pkgs
 
     def get_publisheds_legacy(self, platforms=None):
         root, dirnames, _ = oswalk1(self.published_path)
-        pkgs = [Package(os.path.realpath(os.path.join(root, dirname))) for dirname in dirnames]
+        pkgs = [Package(os.path.abspath(os.path.join(root, dirname))) for dirname in dirnames]
         if platforms:
             platforms = dict([(platform, None) for platform in platforms])
             pkgs = [pkg for pkg in pkgs if pkg.platform in platforms]
@@ -269,7 +271,7 @@ class Domain:
         platforms = platforms or self.get_published_platforms()
         for platform in platforms:
             ppkg = self.get_published(pkg.name, platform)
-            if ppkg and ppkg.path == pkg.path:
+            if ppkg and os.path.realpath(ppkg.path) == os.path.realpath(pkg.path):
                 return True
         return False
 
@@ -281,6 +283,7 @@ class Domain:
             path = os.path.join(self.path, dirname)
             if not os.path.isdir(path):
                 misc.makedirs(os.path.join(self.path, dirname))
+        os.symlink(self.path, self.self_path)
         meta = self.get_meta()
         for k, v in metadata.items():
             meta.set(k, v)
@@ -392,8 +395,8 @@ class Domain:
                     rmcount = 0
                     for filename in filenames:
                         linkname = os.path.join(root, filename)
-                        path = os.path.realpath(linkname)
-                        if path.startswith(pkg.path):
+                        pkgfilepath = os.path.join(pkg.path, root[len(pubplatpath)+1:], filename)
+                        if os.path.realpath(linkname) == os.path.realpath(pkgfilepath):
                             misc.remove(linkname)
                             rmcount += 1
                     if rmcount == len(filenames) and len(dirnames) == 0:

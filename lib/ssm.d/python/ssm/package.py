@@ -79,7 +79,8 @@ def split_pkgref(pkgref):
 class Package:
 
     def __init__(self, path):
-        path = os.path.realpath(path)
+        #path = os.path.realpath(path)
+        path = os.path.abspath(path)
         self.path = path
         self.name = os.path.basename(path)
         self.short, self.version, self.platform = self.name.split("_", 2)

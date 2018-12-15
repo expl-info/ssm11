@@ -60,7 +60,7 @@ Options:
 
 def run(args):
     try:
-        components = ["meta", "control", "installed", "published", "old-files", "old-dirs"]
+        components = ["meta", "control", "installed", "published", "old-files", "old-dirs", "self"]
         dompath = None
         legacy = None
         globls.verbose = False
@@ -137,11 +137,19 @@ def upgrade_legacy(dompath, components):
         profile_path = os.path.join(ssmd_path, "profile")
         platforms_dir = os.path.join(ssmd_path, "platforms")
         published_dir = os.path.join(ssmd_path, "published")
+        self_path = os.path.join(ssmd_path, "self")
         sources_path = os.path.join(ssmd_path, "sources.list")
         subdomains_path = os.path.join(ssmd_path, "subdomains")
         version_path = os.path.join(ssmd_path, "version")
 
         version = misc.gets(version_path)
+
+        # fix self first!
+        if "self" in components:
+            print "upgrading self path"
+            if os.path.exists(self_path):
+                os.unlink(self_path)
+            os.symlink(dom.path, self_path)
 
         if "meta" in components:
             # set meta file
