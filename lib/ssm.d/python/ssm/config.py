@@ -1,6 +1,6 @@
 #! /usr/bin/env python2
 #
-# ssm/globls.py
+# ssm/config.py
 
 # GPL--start
 # This file is part of ssm (Simple Software Manager)
@@ -21,7 +21,17 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
-conf = None
-debug = False
-force = False
-verbose = False
+from ConfigParser import ConfigParser
+import os.path
+import sys
+
+from ssm import globls
+
+def load_configuration():
+
+    SYSCONFPATH = os.path.join(os.path.dirname(sys.argv[0]), "../etc/ssm/ssm.conf")
+    USERCONFPATH = os.path.expanduser("~/.ssm/ssm.conf")
+
+    globls.conf = ConfigParser()
+    globls.conf.optionxform = str
+    globls.conf.read([SYSCONFPATH, USERCONFPATH])

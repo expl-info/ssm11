@@ -24,6 +24,8 @@
 import sys
 from sys import stderr
 
+from ssm.config import load_configuration
+
 def print_usage():
     stderr.write("""\
 usage: ssm <cmd> [<args>]
@@ -54,6 +56,8 @@ if __name__ == "__main__":
     if not args:
         stderr.write("error: bad/missing arguments\n")
         sys.exit(1)
+
+    load_configuration()
 
     cmd = args.pop(0)
     if cmd in ["-h", "--help"]:
