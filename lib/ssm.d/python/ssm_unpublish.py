@@ -92,10 +92,7 @@ def run(args):
                 raise Exception()
 
         if pkgref:
-            dompath, pkgname, pubplat = split_pkgref(pkgref)
-            dom = Domain(dompath)
-            pkg = dom.get_published_short(pkgname, pubplat)
-            pkgname = pkg.name
+            dompath, pkgname, _ = split_pkgref(pkgref)
 
         if not dompath or not pkgname:
             raise Exception()
