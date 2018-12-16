@@ -25,3 +25,6 @@ conf = None
 debug = False
 force = False
 verbose = False
+
+# configurable
+disabled_publish_platforms = [None, "all", "multi"]

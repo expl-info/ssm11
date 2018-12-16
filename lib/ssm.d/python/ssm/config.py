@@ -39,3 +39,8 @@ def load_configuration():
     globls.conf = ConfigParser()
     globls.conf.optionxform = str
     globls.conf.read([SYSCONFPATH, USERCONFPATH])
+
+    if globls.conf.has_option("defaults", "disabled_publish_platforms"):
+        v = globls.conf.get("defaults", "disabled_publish_platforms")
+        v = split_commaspace(v)
+        globls.disabled_publish_platforms = [None]+v

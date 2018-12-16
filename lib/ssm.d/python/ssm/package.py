@@ -28,13 +28,14 @@ import re
 import subprocess
 import traceback
 
+from ssm import globls
 from ssm.control import Control
 from ssm.error import Error
 from ssm.misc import oswalk1, puts
 
 def determine_platform(pkg=None):
     platform = pkg and pkg.platform
-    if platform in [None, "all", "multi"]:
+    if platform in globls.disabled_publish_platforms:
         platform = os.environ.get("SSM_PLATFORM")
     return platform
 
