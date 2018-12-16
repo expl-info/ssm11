@@ -44,3 +44,8 @@ def load_configuration():
         v = globls.conf.get("defaults", "disabled_publish_platforms")
         v = split_commaspace(v)
         globls.disabled_publish_platforms = [None]+v
+
+    if globls.conf.has_option("defaults", "list_for_all_platforms"):
+        v = globls.conf.get("defaults", "list_for_all_platforms")
+        v = v.lower()
+        globls.list_for_all_platforms = v in ["yes", "true"]

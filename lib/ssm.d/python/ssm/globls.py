@@ -28,3 +28,4 @@ verbose = False
 
 # configurable
 disabled_publish_platforms = [None, "all", "multi"]
+list_for_all_platforms = False

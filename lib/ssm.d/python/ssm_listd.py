@@ -82,7 +82,7 @@ def run(args):
         fields = None
         longoutput = False
         pkgnamepat = None
-        platpat = None
+        platpat = globls.list_for_all_platforms and "*" or None
         platforms = None
 
         while args:
