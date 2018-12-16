@@ -27,6 +27,10 @@ import sys
 
 from ssm import globls
 
+def split_commaspace(v):
+    v = v.replace(",", " ")
+    return v.split()
+
 def load_configuration():
 
     SYSCONFPATH = os.path.join(os.path.dirname(sys.argv[0]), "../etc/ssm/ssm.conf")
