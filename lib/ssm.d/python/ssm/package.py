@@ -66,6 +66,7 @@ def split_pkgref(pkgref):
     """Split pkgref into dompath, pkgname, platform.
     """
     try:
+        pkgref = os.path.abspath(pkgref)
         pkgref = pkgref.rstrip("/")
         l = pkgref.rsplit("/", 1)
         if len(l) == 2:
