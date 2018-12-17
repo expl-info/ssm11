@@ -42,9 +42,9 @@ class Domain:
     def __init__(self, path):
         self.path = os.path.abspath(path)
         self.realpath = os.path.realpath(self.path)
-        self.self_path = os.path.join(path, "etc/ssm.d/self")
-        if os.path.islink(self.self_path):
-            self.path = os.readlink(self.self_path)
+        self.selfpath = os.path.join(path, "etc/ssm.d/self")
+        if os.path.islink(self.selfpath):
+            self.path = os.readlink(self.selfpath)
         self.installed_path = os.path.join(self.path, "etc/ssm.d/installed")
         self.published_path = os.path.join(self.path, "etc/ssm.d/published")
         self.meta_path = os.path.join(self.path, "etc/ssm.d/meta.json")
@@ -284,7 +284,7 @@ class Domain:
             path = os.path.join(self.path, dirname)
             if not os.path.isdir(path):
                 misc.makedirs(os.path.join(self.path, dirname))
-        os.symlink(self.path, self.self_path)
+        os.symlink(self.path, self.selfpath)
         meta = self.get_meta()
         for k, v in metadata.items():
             meta.set(k, v)
