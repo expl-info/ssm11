@@ -384,7 +384,7 @@ class Domain:
     def unpublish(self, pkg, platform):
         """Unpublish package.
         """
-        if not self.is_published(pkg, [platform]):
+        if not self.is_published(pkg, [platform]) and not globls.force:
             return Error("package is not published")
         try:
             pubplatpath = os.path.join(self.path, platform)

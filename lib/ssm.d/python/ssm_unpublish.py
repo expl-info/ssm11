@@ -116,7 +116,7 @@ def run(args):
         if not pubplat:
             exits("error: cannot determine platform")
         pkg = dom.get_published(pkgname, pubplat)
-        if not pkg:
+        if not pkg and not globls.force:
             exits("error: package is not published")
         deppkgs = err = dom.get_dependents(pkg, pubplat)
         if isinstance(err, Error):
