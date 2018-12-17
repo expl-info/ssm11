@@ -116,16 +116,17 @@ def run(args):
                 del args[:]
             else:
                 raise Exception()
+
+        if not srcdompaths or not dstdompath:
+            raise Exception()
+
+        if not installed and not published and not publishedsrc:
+            raise Exception()
     except SystemExit:
         raise
     except:
         if globls.debug:
             traceback.print_exc()
-        exits("error: bad/missing arguments")
-
-    if not srcdompaths or not dstdompath:
-        exits("error: bad/missing arguments")
-    if not installed and not published and not publishedsrc:
         exits("error: bad/missing arguments")
 
     try:

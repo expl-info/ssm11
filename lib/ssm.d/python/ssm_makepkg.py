@@ -95,10 +95,10 @@ def run(args):
             traceback.print_exc()
         exits("error: bad/missing arguments")
 
-    if not os.path.exists(srcdir):
-        exits("error: cannot find directory")
-
     try:
+        if not os.path.exists(srcdir):
+            exits("error: cannot find directory")
+
         if not pkgname:
             pkgname = os.path.basename(srcdir)
 

@@ -98,15 +98,15 @@ def run(args):
 
         if not dompath or not pkgname:
             raise Exception()
+
+        if not pubdompath:
+            pubdompath = dompath
     except SystemExit:
         raise
     except:
         if globls.debug:
             traceback.print_exc()
         exits("error: bad/missing arguments")
-
-    if not pubdompath:
-        pubdompath = dompath
 
     try:
         dom = Domain(dompath)

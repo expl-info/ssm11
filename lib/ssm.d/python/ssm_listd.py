@@ -109,14 +109,14 @@ def run(args):
                 globls.verbose = True
             else:
                 raise Exception()
+
+        if not dompath:
+            raise Exception()
     except SystemExit:
         raise
     except:
         if globls.debug:
             traceback.print_exc()
-        exits("error: bad/missing arguments")
-
-    if not dompath:
         exits("error: bad/missing arguments")
 
     try:

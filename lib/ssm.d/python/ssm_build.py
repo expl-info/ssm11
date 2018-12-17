@@ -171,17 +171,17 @@ def run(args):
             else:
                 buildnames = [arg]+args
                 del args[:]
+
+        if not bssmdir \
+            or not sourcesurl \
+            or not dompath \
+            or not platform:
+            raise Exception()
     except SystemExit:
         raise
     except:
         if globls.debug:
             traceback.print_exc()
-        exits("error: bad/missing arguments")
-
-    if not bssmdir \
-        or not sourcesurl \
-        or not dompath \
-        or not platform:
         exits("error: bad/missing arguments")
 
     try:

@@ -96,7 +96,6 @@ def run(args):
 
         if not dompath or not pkgname:
             raise Exception()
-
     except SystemExit:
         raise
     except:
