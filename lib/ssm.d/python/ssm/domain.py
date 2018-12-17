@@ -399,10 +399,13 @@ class Domain:
                         if os.path.realpath(linkname) == os.path.realpath(pkgfilepath):
                             misc.remove(linkname)
                             rmcount += 1
-                    if rmcount == len(filenames) and len(dirnames) == 0:
-                        # remove empty directory
+                    if rmcount == len(filenames):
+                        # try to remove possibly empty directory
                         if root != pubdirpath:
-                            misc.rmdir(root)
+                            try:
+                                misc.rmdir(root)
+                            except:
+                                pass
             self.__unset_published(pkg, platform)
         except:
             if globls.debug:
