@@ -272,7 +272,7 @@ class Domain:
         platforms = platforms or self.get_published_platforms()
         for platform in platforms:
             ppkg = self.get_published(pkg.name, platform)
-            if ppkg and os.path.realpath(ppkg.path) == os.path.realpath(pkg.path):
+            if ppkg and ppkg.realpath == pkg.realpath:
                 return True
         return False
 
