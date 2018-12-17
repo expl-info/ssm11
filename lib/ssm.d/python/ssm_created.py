@@ -87,13 +87,6 @@ def run(args):
     if not dompath:
         exits("error: bad/missing arguments")
 
-    dompath = os.path.abspath(dompath)
-    if dompath != os.path.realpath(dompath):
-        if globls.force:
-            sys.stderr.write("warning: domain path does not equal domain realpath\n")
-        else:
-            exits("error: domain path does not equal domain realpath")
-
     try:
         metadata = {
             "label": label or "",
@@ -101,6 +94,12 @@ def run(args):
             "version": constants.SSM_VERSION,
         }
         dom = Domain(dompath)
+        if dom.path != dom.realpath:
+            if globls.force:
+                sys.stderr.write("warning: domain path does not match domain realpath\n")
+            else:
+                exits("error: domain path does not match domain realpath")
+
         err = dom.create(metadata, globls.force)
         if err:
             exits(err)
