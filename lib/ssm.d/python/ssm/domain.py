@@ -41,6 +41,7 @@ class Domain:
 
     def __init__(self, path):
         self.path = os.path.abspath(path)
+        self.realpath = os.path.realpath(self.path)
         self.self_path = os.path.join(path, "etc/ssm.d/self")
         if os.path.islink(self.self_path):
             self.path = os.readlink(self.self_path)
