@@ -31,6 +31,7 @@ import traceback
 from ssm import constants
 from ssm import globls
 from ssm.domain import Domain
+from ssm.meta import Meta
 from ssm.misc import exits
 
 def print_usage():
@@ -88,11 +89,11 @@ def run(args):
         exits("error: bad/missing arguments")
 
     try:
-        metadata = {
-            "label": label or "",
-            "repository": repourl or "",
-            "version": constants.SSM_VERSION,
-        }
+        meta = Meta()
+        meta.set("label", label or "")
+        meta.set("repository", repourl or "")
+        meta.set("version", constants.SSM_VERSION)
+
         dom = Domain(dompath)
         if dom.path != dom.realpath:
             if globls.force:
@@ -100,7 +101,7 @@ def run(args):
             else:
                 exits("error: domain path does not match domain realpath")
 
-        err = dom.create(metadata, globls.force)
+        err = dom.create(meta, globls.force)
         if err:
             exits(err)
     except SystemExit:

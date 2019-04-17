@@ -163,8 +163,7 @@ class Domain:
     def get_inventory(self):
         d = {}
         d["path"] = self.path
-        # TODO: update to not reach into Meta
-        d["meta"] = self.get_meta().d
+        d["meta"] = self.get_meta().getall()
         installed = {}
         for plat in os.listdir(self.installed_path):
             root = os.path.join(self.installed_path, plat)
@@ -185,7 +184,8 @@ class Domain:
 
     def get_meta(self, force=False):
         if self.meta == None or force:
-            self.meta = Meta(self.meta_path)
+            self.meta = Meta()
+            self.meta.load(self.meta_path)
         return self.meta
 
     def get_published(self, name, platform=None):
@@ -243,6 +243,9 @@ class Domain:
     def get_version_legacy(self):
         return gets(os.path.join(self.path, "etc/ssm.d/version"))
 
+    def has_meta(self):
+        return os.path.exists(self.meta_path)
+
     def is_installed(self, pkg):
         ipkg = self.get_installed(pkg.name)
         return ipkg and ipkg.path == pkg.path
@@ -277,7 +280,7 @@ class Domain:
         return False
 
     # high-level operations
-    def create(self, metadata, force=False):
+    def create(self, meta, force=False):
         if self.exists() and not force:
             return Error("domain already exists")
         for dirname in [".", "etc/ssm.d/broken", "etc/ssm.d/installed", "etc/ssm.d/published",]:
@@ -285,10 +288,7 @@ class Domain:
             if not os.path.isdir(path):
                 misc.makedirs(os.path.join(self.path, dirname))
         os.symlink(self.path, self.selfpath)
-        meta = self.get_meta()
-        for k, v in metadata.items():
-            meta.set(k, v)
-        meta.store()
+        self.put_meta(meta)
 
     def install(self, pkgfile, force=False):
         if not self.is_owner():
@@ -368,6 +368,9 @@ class Domain:
                 traceback.print_exc()
             return Error("publish was unsuccessful")
 
+    def put_meta(self, meta):
+        meta.dump(self.meta_path)
+
     def uninstall(self, pkg):
         if not self.is_installed(pkg):
             return Error("package is not installed")
@@ -412,10 +415,3 @@ class Domain:
             if globls.debug:
                 traceback.print_exc()
             return Error("unpublish was unsuccessful")
-
-    def update_meta(self, name, value):
-        meta = self.get_meta()
-        if meta == None:
-            return None
-        meta.setstore(name, value)
-        return meta

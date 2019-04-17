@@ -36,6 +36,7 @@ from ssm import misc
 from ssm.control import Control
 from ssm.domain import Domain
 from ssm.error import Error
+from ssm.meta import Meta
 from ssm.misc import exits
 from ssm.package import Package
 
@@ -107,7 +108,8 @@ def run(args):
             if meta.get("version") == None:
                 exits(dom.get_version_legacy())
 
-            meta.setstore("version", constants.SSM_VERSION)
+            meta.set("version", constants.SSM_VERSION)
+            dom.put_meta(meta)
     except SystemExit:
         raise
     except:
@@ -153,13 +155,13 @@ def upgrade_legacy(dompath, components):
 
         if "meta" in components:
             # set meta file
-            metadata = {
-                "label": misc.gets(label_path),
-                "repository": misc.gets(sources_path),
-                "version": constants.SSM_VERSION,
-            }
+            meta = Meta()
+            meta.set("label", misc.gets(label_path))
+            meta.set("repository", misc.gets(sources_path))
+            meta.set("version", constants.SSM_VERSION)
+
             print "upgrading domain metadata"
-            err = dom.create(metadata, True)
+            err = dom.create(meta, True)
             if err:
                 exits(err)
 

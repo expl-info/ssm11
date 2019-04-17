@@ -32,6 +32,7 @@ import traceback
 from ssm import constants
 from ssm import globls
 from ssm.domain import Domain
+from ssm.meta import Meta
 from ssm.misc import exits
 from ssm.package import Package
 from ssm.packagefile import PackageFile
@@ -143,13 +144,13 @@ def run(args):
             repo = Repository(repourl)
 
             if not dstdom.exists():
-                metadata = {
-                    "label": label or "",
-                    "repository": repourl,
-                    "version": constants.SSM_VERSION,
-                }
+                meta = Meta()
+                meta.set("label", label or "")
+                meta.set("repository", repourl)
+                meta.set("version", constants.SSM_VERSION)
+
                 print "creating dstdom (%s) ... " % (dstdom.path,),
-                err = dstdom.create(metadata, globls.force)
+                err = dstdom.create(meta, globls.force)
                 if err:
                     print "fail"
                     exits(err)
