@@ -54,3 +54,30 @@ class JsonFile:
 
     def store(self):
         json.dump(self.d, open(self.path, "w"), indent=2, sort_keys=True)
+
+class JsonFile2:
+
+    def __init__(self):
+        self.d = {}
+
+    def clear(self):
+        self.d = {}
+
+    def dump(self, path, indent=2, sort_keys=False):
+        return json.dump(self.d, open(path, "w"), indent=indent, sort_keys=sort_keys)
+
+    def dumps(self, indent=2, sort_keys=False):
+        return json.dumps(self.d, indent=indent, sort_keys=sort_keys)
+
+    def get(self, k, default=None):
+        return self.d.get(k, default)
+
+    def getall(self):
+        return self.d
+
+    def load(self, path):
+        if os.path.exists(path):
+            self.d.update(json.load(open(path)))
+
+    def set(self, k, v):
+        self.d[k] = v
