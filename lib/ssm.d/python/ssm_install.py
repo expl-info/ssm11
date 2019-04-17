@@ -33,7 +33,7 @@ from ssm import globls
 from ssm.domain import Domain
 from ssm.error import Error
 from ssm.misc import exits
-from ssm.packagefile import PackageFile
+from ssm.packagefile import PackageFile, PackageFileSkeleton
 from ssm.repository import RepositoryGroup
 
 def print_usage():
@@ -50,6 +50,9 @@ Where:
 
 Options:
 -r <url>        Repository URL
+--skeleton      Install package skeleton (control.json, etc). No
+                package or package file is required. For use with
+                -p only.
 
 --debug         Enable debugging
 --force         Force operation
@@ -61,6 +64,8 @@ def run(args):
         pkgname = None
         pkgfpath = None
         repourl = None
+        skeleton = False
+        skeleton_comps = ["control", "pubdirs"]
 
         while args:
             arg = args.pop(0)
@@ -74,6 +79,8 @@ def run(args):
                 pkgfpath = None
             elif arg == "-r" and args:
                 repourl = args.pop(0)
+            elif arg == "--skeleton":
+                skeleton = True
 
             elif arg in ["-h", "--help"]:
                 print_usage()
@@ -89,6 +96,8 @@ def run(args):
 
         if not dompath \
             or (not pkgname and not pkgfpath):
+            raise Exception()
+        if skeleton and not pkgname:
             raise Exception()
     except SystemExit:
         raise
@@ -108,14 +117,19 @@ def run(args):
         if pkgfpath:
             pkgf = PackageFile(pkgfpath)
         elif pkgname:
-            if repourl:
-                repo = RepositoryGroup([repourl])
+            if skeleton:
+                # dummy filename
+                pkgfpath = "%s.ssm" % (pkgname,)
+                pkgf = PackageFileSkeleton(pkgfpath, skeleton_comps)
             else:
-                repo = dom.get_repository()
-                if repo == None:
-                    exits("error: no repository")
+                if repourl:
+                    repo = RepositoryGroup([repourl])
+                else:
+                    repo = dom.get_repository()
+                    if repo == None:
+                        exits("error: no repository")
 
-            pkgf = repo.get_packagefile(pkgname)
+                pkgf = repo.get_packagefile(pkgname)
 
         if pkgf == None:
             exits("error: cannot find package")

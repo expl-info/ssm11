@@ -27,10 +27,12 @@ import string
 import tarfile
 import traceback
 
+from ssm.constants import *
 from ssm import globls
 from ssm import misc
 from ssm.control import Control
 from ssm.error import Error
+from ssm.package import Package
 
 class PackageFile:
 
@@ -95,3 +97,40 @@ class PackageFile:
             if globls.debug:
                 traceback.print_exc()
             return Error("bad control file")
+
+class PackageFileSkeleton(PackageFile):
+
+    def __init__(self, path, components=None):
+        PackageFile.__init__(self, path)
+        self.components = components
+
+    def exists(self):
+        return True
+
+    def is_valid(self):
+        return True
+
+    def unpack(self, dstpath):
+        try:
+            pkg = Package(os.path.join(dstpath, self.name))
+
+            if "control" in self.components:
+                control = pkg.get_control()
+                control.set("name", pkg.short)
+                control.set("version", pkg.version)
+                control.set("platform", pkg.platform)
+                control.set("summary", self.name)
+                path = os.path.dirname(control.path)
+                if not os.path.exists(path):
+                    os.makedirs(path)
+                control.store()
+
+            if "pubdirs" in self.components:
+                for name in PUBLISHABLE_DIRS:
+                    path = os.path.join(pkg.path, name)
+                    if not os.path.exists(path):
+                        os.makedirs(path)
+        except:
+            if globls.debug:
+                traceback.print_exc()
+            return Error("could not unpack skeleton package file")
