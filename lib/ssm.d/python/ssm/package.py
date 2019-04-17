@@ -132,3 +132,8 @@ class Package:
 
     def get_members(self, pattern=None):
         return find_paths(self.path, "", re.compile(pattern or ".*"))
+
+    def put_control(self, control):
+        if control.path != self.control_path:
+            raise Exception("cannot store control file to different path")
+        return control.store()
