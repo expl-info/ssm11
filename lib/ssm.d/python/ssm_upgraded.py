@@ -168,26 +168,24 @@ def upgrade_legacy(dompath, components):
         if "control" in components:
             names = get_package_names(installed_dir)
             for name in names:
-                pkgpath = os.path.join(installed_dir, name)
-                control_path = os.path.join(pkgpath, ".ssm.d/control.json")
-                control = Control(control_path)
-                if not control.exists():
-                    control.load_legacy()
+                pkg = Package(os.path.join(installed_dir, name))
+                if not pkg.has_control():
+                    control = pkg.get_control(legacy=True)
                     if control.get("name") == None:
                         print "warning: generating control file from name (%s)" % (name,)
                         try:
-                            t = name.split("_", 2)
-                            control.set("name", t[0])
-                            control.set("version", t[1])
-                            control.set("platform", t[2])
+                            control.set("name", pkg.short)
+                            control.set("version", pkg.version)
+                            control.set("platform", pkg.platform)
+                            control.set("summary", pkg.name)
                         except:
                             exits("warning: could not generate create control file from name (%s)" % (name,))
 
-                print "upgrading package control file (%s)" % (control_path,)
-                try:
-                    control.store()
-                except:
-                    exits("cannot write new control file")
+                    print "upgrading control file for package (%s)" % (name,)
+                    try:
+                        pkg.put_control(control)
+                    except:
+                        exits("cannot write new control file")
 
         if "installed" in components:
             # update installed dir

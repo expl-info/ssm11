@@ -26,14 +26,14 @@ import string
 import traceback
 
 from ssm import globls
-from ssm.jsonfile import JsonFile
+from ssm.jsonfile import JsonFile2
 
-class Control(JsonFile):
+class Control(JsonFile2):
 
-    def __init__(self, *args, **kwargs):
-        JsonFile.__init__(self, *args, **kwargs)
+    def __init__(self):
+        JsonFile2.__init__(self)
 
-    def load_legacy(self):
+    def load_legacy(self, path):
         def put(d, k, v):
             if k == "description":
                 d["summary"] = v[0]
@@ -43,7 +43,6 @@ class Control(JsonFile):
 
         try:
             d = {}
-            path = os.path.join(os.path.dirname(self.path), "control")
             if os.path.exists(path):
                 k = None
                 v = []

@@ -87,6 +87,7 @@ class Package:
         self.name = os.path.basename(path)
         self.short, self.version, self.platform = self.name.split("_", 2)
         self.control_path = os.path.join(self.path, ".ssm.d/control.json")
+        self.control_path_legacy = os.path.join(self.path, ".ssm.d/control")
 
     def __str__(self):
         return "<Package name (%s, %s, %s)>" % (self.short, self.version, self.platform)
@@ -123,8 +124,13 @@ class Package:
     def exists(self):
         return os.path.exists(self.path)
 
-    def get_control(self):
-        return Control(self.control_path)
+    def get_control(self, legacy=False):
+        control = Control()
+        if legacy:
+            control.load_legacy(self.control_path_legacy)
+        else:
+            control.load(self.control_path)
+        return control
 
     def get_domain(self):
         from ssm.domain import Domain
@@ -133,7 +139,14 @@ class Package:
     def get_members(self, pattern=None):
         return find_paths(self.path, "", re.compile(pattern or ".*"))
 
+    def has_control(self, legacy=False):
+        if legacy:
+            return os.path.exists(self.control_path_legacy)
+        else:
+            return os.path.exists(self.control_path)
+
     def put_control(self, control):
-        if control.path != self.control_path:
-            raise Exception("cannot store control file to different path")
-        return control.store()
+        path = os.path.dirname(self.control_path)
+        if not os.path.exists(path):
+            os.makedirs(path)
+        control.dump(self.control_path)

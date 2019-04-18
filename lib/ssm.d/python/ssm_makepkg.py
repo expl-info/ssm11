@@ -109,8 +109,9 @@ def run(args):
         # check required components
         control_path = os.path.join(srcdir, ".ssm.d/control.json")
         control_path_short = os.path.join(pkgname, ".ssm.d/control.json")
-        control = Control(control_path)
-        if not control.exists() and not autocontrol:
+        control = Control()
+        control.load(control_path)
+        if not os.path.exists(control_path) and not autocontrol:
             exits("error: no control.json file (%s)" % (control_path,))
 
         if autocontrol:

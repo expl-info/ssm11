@@ -76,10 +76,9 @@ class PackageFile:
 
         try:
             # upgrade legacy control file (if necessary)
-            control_path = os.path.join(dstpath, self.name, ".ssm.d/control.json")
-            control = Control(control_path)
-            if not control.exists():
-                control.load_legacy()
+            pkg = Package(os.path.join(dstpath, self.name))
+            if not pkg.has_control():
+                control = pkg.get_control(legacy=True)
                 if control.get("name") == None:
                     return Error("missing control file")
 
@@ -92,7 +91,7 @@ class PackageFile:
                 if ct[2] != ft[2]:
                     return Error("bad control file platform mismatch (%s, %s)" % (ct[2], ft[2]))
 
-                control.store()
+                pkg.put_control(control)
         except:
             if globls.debug:
                 traceback.print_exc()
@@ -120,10 +119,7 @@ class PackageFileSkeleton(PackageFile):
                 control.set("version", pkg.version)
                 control.set("platform", pkg.platform)
                 control.set("summary", self.name)
-                path = os.path.dirname(control.path)
-                if not os.path.exists(path):
-                    os.makedirs(path)
-                control.store()
+                pkg.put_control(control)
 
             if "pubdirs" in self.components:
                 for name in PUBLISHABLE_DIRS:
