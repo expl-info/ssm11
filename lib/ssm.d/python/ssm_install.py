@@ -29,6 +29,7 @@ import sys
 from sys import stderr
 import traceback
 
+from ssm.constants import SKELETON_COMPS
 from ssm import globls
 from ssm.domain import Domain
 from ssm.error import Error
@@ -65,7 +66,7 @@ def run(args):
         pkgfpath = None
         repourl = None
         skeleton = False
-        skeleton_comps = ["control", "pubdirs"]
+        skeleton_comps = SKELETON_COMPS
 
         while args:
             arg = args.pop(0)

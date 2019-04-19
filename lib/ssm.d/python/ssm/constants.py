@@ -24,3 +24,4 @@
 SSM_VERSION = "11.6"
 
 PUBLISHABLE_DIRS = ["bin", "etc/profile.d", "include", "lib", "man", "share"]
+SKELETON_COMPS = ["control", "pubdirs"]
