@@ -26,12 +26,12 @@ import string
 import traceback
 
 from ssm import globls
-from ssm.jsonfile import JsonFile2
+from ssm.jsonfile import JsonFile
 
-class Control(JsonFile2):
+class Control(JsonFile):
 
     def __init__(self):
-        JsonFile2.__init__(self)
+        JsonFile.__init__(self)
 
     def load_legacy(self, path):
         def put(d, k, v):

@@ -26,37 +26,6 @@ import os.path
 
 class JsonFile:
 
-    def __init__(self, path, autoload=True):
-        self.path = os.path.realpath(path)
-        self.d = {}
-        if autoload:
-            self.load()
-
-    def dumps(self, indent=2, sort_keys=False):
-        return json.dumps(self.d, indent=indent, sort_keys=sort_keys)
-
-    def exists(self):
-        return os.path.exists(self.path)
-
-    def get(self, k, default=None):
-        return self.d.get(k, default)
-
-    def load(self):
-        if self.exists():
-            self.d = json.load(open(self.path))
-
-    def set(self, k, v):
-        self.d[k] = v
-
-    def setstore(self, k, v):
-        self.set(k, v)
-        self.store()
-
-    def store(self):
-        json.dump(self.d, open(self.path, "w"), indent=2, sort_keys=True)
-
-class JsonFile2:
-
     def __init__(self):
         self.d = {}
 

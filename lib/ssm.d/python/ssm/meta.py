@@ -21,9 +21,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
-from ssm.jsonfile import JsonFile2
+from ssm.jsonfile import JsonFile
 
-class Meta(JsonFile2):
+class Meta(JsonFile):
 
     def __init__(self):
-        JsonFile2.__init__(self)
+        JsonFile.__init__(self)
