@@ -31,25 +31,36 @@ import traceback
 
 from ssm.constants import SKELETON_COMPS
 from ssm import globls
+from ssm import misc
 from ssm.domain import Domain
 from ssm.error import Error
 from ssm.misc import exits
+from ssm.package import Package
 from ssm.packagefile import PackageFile, PackageFileSkeleton
 from ssm.repository import RepositoryGroup
 
 def print_usage():
     print("""\
-usage: ssm install [<options>] -d <dompath> (-p <pkgname>|-f <pkgfile>)
+usage: ssm install [<options>] -d <dompath> -f <pkgfile>
+       ssm install [<options>] -d <dompath> -p <pkgname>
+       ssm install [<options>] -d <dompath> -p <pkgname> -s <srcdir>
        ssm install -h|--help
 
-Install package to domain.
+Install package to domain. Package contents may come from a package
+file, a package in a repository, a source directory, or a skeleton
+package only.
 
 Where:
 <dompath>       Domain path
 <pkgfile>       Package file (ending in .ssm)
 <pkgname>       Package name found in repository
+<srcdir>        Source directory from which to install
 
 Options:
+--names <name>[,...]
+                CSV list of top-lvel object names to import.
+                Default is all in the <srcdir>. For use with -s
+                only.
 -r <url>        Repository URL
 --skeleton      Install package skeleton (control.json, etc). No
                 package or package file is required. For use with
@@ -62,11 +73,12 @@ Options:
 def run(args):
     try:
         dompath = None
+        names = None
         pkgname = None
         pkgfpath = None
         repourl = None
         skeleton = False
-        skeleton_comps = SKELETON_COMPS
+        skeleton_comps = None
 
         while args:
             arg = args.pop(0)
@@ -75,13 +87,19 @@ def run(args):
             elif arg == "-f" and args:
                 pkgfpath = args.pop(0)
                 pkgname = None
+            elif arg == "--names" and args:
+                names = args.pop(0).split(",")
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
                 pkgfpath = None
             elif arg == "-r" and args:
                 repourl = args.pop(0)
+            elif arg == "-s" and args:
+                srcdir = args.pop(0)
+                skeleton = None
             elif arg == "--skeleton":
                 skeleton = True
+                srcdir = None
 
             elif arg in ["-h", "--help"]:
                 print_usage()
@@ -97,8 +115,6 @@ def run(args):
 
         if not dompath \
             or (not pkgname and not pkgfpath):
-            raise Exception()
-        if skeleton and not pkgname:
             raise Exception()
     except SystemExit:
         raise
@@ -117,20 +133,47 @@ def run(args):
 
         if pkgfpath:
             pkgf = PackageFile(pkgfpath)
-        elif pkgname:
-            if skeleton:
-                # dummy filename
-                pkgfpath = "%s.ssm" % (pkgname,)
-                pkgf = PackageFileSkeleton(pkgfpath, skeleton_comps)
-            else:
-                if repourl:
-                    repo = RepositoryGroup([repourl])
-                else:
-                    repo = dom.get_repository()
-                    if repo == None:
-                        exits("error: no repository")
+        elif skeleton:
+            # dummy filename
+            pkgfpath = "%s.ssm" % (pkgname,)
+            if skeleton_comps == None:
+                skeleton_comps = SKELETON_COMPS
+            pkgf = PackageFileSkeleton(pkgfpath, skeleton_comps)
+        elif srcdir:
+            pkg = Package(os.path.join(dompath, pkgname))
+            if os.path.exists(pkg.path) and not globls.force:
+                exits("error: package is installed")
 
-                pkgf = repo.get_packagefile(pkgname)
+            skeleton_comps = ["control"]
+            pkgf = PackageFileSkeleton("%s.ssm" % pkg.path, skeleton_comps)
+
+            if names == None:
+                names = os.listdir(srcdir)
+
+            if not os.path.exists(pkg.path):
+                misc.makedirs(pkg.path)
+
+            for name in names:
+                if "/" in name:
+                    stderr.write("warning: name (%s) cannot be installed\n" % name)
+                srcpath = os.path.join(srcdir, name)
+                dstpath = os.path.join(pkg.path, name)
+                if not os.path.exists(srcpath):
+                    # skip?
+                    pass
+                misc.symlink(srcpath, dstpath, force=True)
+
+            # force install even with something at pkg.path
+            globls.force = True
+        else:
+            if repourl:
+                repo = RepositoryGroup([repourl])
+            else:
+                repo = dom.get_repository()
+                if repo == None:
+                    exits("error: no repository")
+
+            pkgf = repo.get_packagefile(pkgname)
 
         if pkgf == None:
             exits("error: cannot find package")
@@ -146,7 +189,8 @@ def run(args):
         exits("error: operation failed")
     finally:
         try:
-            misc.remove(pkgfpath)
+            if os.pkgfpath:
+                misc.remove(pkgfpath)
         except:
             pass
     sys.exit(0)
