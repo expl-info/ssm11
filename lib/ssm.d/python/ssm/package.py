@@ -57,7 +57,7 @@ def find_paths(basepath, relpath, cre):
         if cre.match(path):
             members.extend(find_paths(basepath, path, cre))
     for filename in filenames:
-        path = os.path.join(relapth, filename)
+        path = os.path.join(relpath, filename)
         if cre.match(path):
             members.append(path)
     return members
