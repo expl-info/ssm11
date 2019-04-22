@@ -299,7 +299,7 @@ class Domain:
         if pkgfile.is_valid() < 0:
             return Error("package file is not valid")
         pkg = Package(self.joinpath(pkgfile.name))
-        if self.is_installed(pkg) and (not reinstall or not force):
+        if self.is_installed(pkg) and not reinstall and not force:
             return Error("package already installed")
         try:
             err = pkgfile.unpack(self.path)
