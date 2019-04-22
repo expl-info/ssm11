@@ -279,6 +279,9 @@ class Domain:
                 return True
         return False
 
+    def joinpath(self, *comps):
+        return os.path.join(self.path, *comps)
+
     # high-level operations
     def create(self, meta, force=False):
         if self.exists() and not force:

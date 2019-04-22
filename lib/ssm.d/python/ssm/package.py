@@ -145,6 +145,9 @@ class Package:
         else:
             return os.path.exists(self.control_path)
 
+    def joinpath(self, *comps):
+        return os.path.join(self.path, *comps)
+
     def put_control(self, control):
         path = os.path.dirname(self.control_path)
         if not os.path.exists(path):
