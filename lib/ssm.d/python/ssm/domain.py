@@ -49,7 +49,6 @@ class Domain:
         self.published_path = self.joinpath("etc/ssm.d/published")
         self.meta_path = self.joinpath("etc/ssm.d/meta.json")
 
-        self.meta = None
         self.legacy = None
 
     def __create_depmgr(self, platforms):
@@ -182,11 +181,10 @@ class Domain:
         d["published"] = published
         return d
 
-    def get_meta(self, force=False):
-        if self.meta == None or force:
-            self.meta = Meta()
-            self.meta.load(self.meta_path)
-        return self.meta
+    def get_meta(self):
+        meta = Meta()
+        meta.load(self.meta_path)
+        return meta
 
     def get_published(self, name, platform=None):
         try:
