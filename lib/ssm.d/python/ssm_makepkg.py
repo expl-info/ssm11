@@ -96,22 +96,23 @@ def run(args):
         exits("error: bad/missing arguments")
 
     try:
-        if not os.path.exists(srcdir):
+        pkg = Package(srcdir, splitname=False)
+        if not pkg.exists():
             exits("error: cannot find directory")
 
         if not pkgname:
-            pkgname = os.path.basename(srcdir)
+            pkgname = pkg.name
 
-        pkgname_comps= pkgname.split("_")
+        pkgname_comps = pkgname.split("_")
         if len(pkgname_comps) != 3:
             exits("error: bad package name (%s)" % (pkgname,))
 
         # check required components
-        control_path = os.path.join(srcdir, ".ssm.d/control.json")
+        control_path = pkg.joinpath(".ssm.d/control.json")
         control_path_short = os.path.join(pkgname, ".ssm.d/control.json")
         control = Control()
         control.load(control_path)
-        if not os.path.exists(control_path) and not autocontrol:
+        if not pkg.has_control() and not autocontrol:
             exits("error: no control.json file (%s)" % (control_path,))
 
         if autocontrol:
@@ -120,15 +121,15 @@ def run(args):
             control.set("platform", pkgname_comps[2])
 
         # check expected components
-        postinstall_script = os.path.join(srcdir, ".ssm.d/post-install")
-        preuninstall_script = os.path.join(srcdir, ".ssm.d/pre-uninstall")
+        postinstall_script = pkg.joinpath( ".ssm.d/post-install")
+        preuninstall_script = pkg.joinpath(".ssm.d/pre-uninstall")
         if not os.path.exists(postinstall_script):
             sys.stderr.write("warning: no post-install script (%s)\n" % (postinstall_script,))
         if not os.path.exists(preuninstall_script):
             sys.stderr.write("warning: no pre-uninstall script (%s)\n" % (preuninstall_script,))
 
-        sh_profile_script = os.path.join(srcdir, "etc/profile.d/%s.sh" % (pkgname,))
-        csh_profile_script = os.path.join(srcdir, "etc/profile.d/%s.csh" % (pkgname,))
+        sh_profile_script = pkg.joinpath("etc/profile.d", "%s.sh" % pkgname)
+        csh_profile_script = pkg.joinpath("etc/profile.d", "%s.csh" % pkgname)
         if not os.path.exists(sh_profile_script):
             sys.stderr.write("warning: no sh profile script (%s)\n" % (sh_profile_script,))
         if not os.path.exists(csh_profile_script):
