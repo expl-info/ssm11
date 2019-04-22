@@ -145,7 +145,7 @@ def run(args):
             pkgf = PackageFileSkeleton(pkgfpath, skeleton_comps)
         elif srcdir:
             pkg = Package(dom.joinpath(pkgname))
-            if os.path.exists(pkg.path) and (not reinstall or not globls.force):
+            if pkg.exists() and (not reinstall or not globls.force):
                 exits("error: package is installed")
 
             skeleton_comps = ["control"]
@@ -154,7 +154,7 @@ def run(args):
             if names == None:
                 names = os.listdir(srcdir)
 
-            if not os.path.exists(pkg.path):
+            if not pkg.exists():
                 misc.makedirs(pkg.path)
 
             for name in names:
