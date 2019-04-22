@@ -62,6 +62,7 @@ Options:
                 Default is all in the <srcdir>. For use with -s
                 only.
 -r <url>        Repository URL
+--reinstall     Allow install over existing installation
 --skeleton      Install package skeleton (control.json, etc). No
                 package or package file is required. For use with
                 -p only.
@@ -76,6 +77,7 @@ def run(args):
         names = None
         pkgname = None
         pkgfpath = None
+        reinstall = False
         repourl = None
         skeleton = False
         skeleton_comps = None
@@ -94,6 +96,8 @@ def run(args):
                 pkgfpath = None
             elif arg == "-r" and args:
                 repourl = args.pop(0)
+            elif arg == "--reinstall":
+                reinstall = True
             elif arg == "-s" and args:
                 srcdir = args.pop(0)
                 skeleton = None
@@ -141,7 +145,7 @@ def run(args):
             pkgf = PackageFileSkeleton(pkgfpath, skeleton_comps)
         elif srcdir:
             pkg = Package(os.path.join(dompath, pkgname))
-            if os.path.exists(pkg.path) and not globls.force:
+            if os.path.exists(pkg.path) and (not reinstall or not globls.force):
                 exits("error: package is installed")
 
             skeleton_comps = ["control"]
@@ -178,7 +182,7 @@ def run(args):
         if pkgf == None:
             exits("error: cannot find package")
 
-        err = dom.install(pkgf, globls.force)
+        err = dom.install(pkgf, globls.force, reinstall=reinstall)
         if err:
             exits(err)
     except SystemExit:

@@ -290,13 +290,13 @@ class Domain:
         os.symlink(self.path, self.selfpath)
         self.put_meta(meta)
 
-    def install(self, pkgfile, force=False):
+    def install(self, pkgfile, force=False, reinstall=False):
         if not self.is_owner():
             return Error("must own domain")
         if pkgfile.is_valid() < 0:
             return Error("package file is not valid")
         pkg = Package(os.path.join(self.path, pkgfile.name))
-        if self.is_installed(pkg) and not force:
+        if self.is_installed(pkg) and (not reinstall or not force):
             return Error("package already installed")
         try:
             err = pkgfile.unpack(self.path)
