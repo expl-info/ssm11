@@ -86,8 +86,8 @@ class Package:
         self.realpath = os.path.realpath(path)
         self.name = os.path.basename(path)
         self.short, self.version, self.platform = self.name.split("_", 2)
-        self.control_path = os.path.join(self.path, ".ssm.d/control.json")
-        self.control_path_legacy = os.path.join(self.path, ".ssm.d/control")
+        self.control_path = self.joinpath(".ssm.d/control.json")
+        self.control_path_legacy = self.joinpath(".ssm.d/control")
 
     def __str__(self):
         return "<Package name (%s, %s, %s)>" % (self.short, self.version, self.platform)
@@ -95,7 +95,7 @@ class Package:
     __repr__ = __str__
 
     def execute_script(self, name, dompath):
-        path = os.path.join(self.path, ".ssm.d/%s" % name)
+        path = self.joinpath(".ssm.d", name)
         if not os.path.isfile(path):
             return
 
@@ -110,8 +110,8 @@ class Package:
 
             env["SSM_INSTALL_DOMAIN_HOME"] = dompath
             env["SSM_INSTALL_PACKAGE_HOME"] = self.path
-            env["SSM_INSTALL_PROFILE_PATH"] = os.path.join(self.path, "etc/profile.d/%s.sh" % self.name)
-            env["SSM_INSTALL_LOGIN_PATH"] = os.path.join(self.path, "etc/profile.d/%s.csh" % self.name)
+            env["SSM_INSTALL_PROFILE_PATH"] = self.joinpath("etc/profile.d", "%s.sh" % self.name)
+            env["SSM_INSTALL_LOGIN_PATH"] = self.joinpath("etc/profile.d", "%s.csh" % self.name)
 
             p = subprocess.Popen(args, env=env)
             p.wait()

@@ -42,12 +42,12 @@ class Domain:
     def __init__(self, path):
         self.path = os.path.abspath(path)
         self.realpath = os.path.realpath(self.path)
-        self.selfpath = os.path.join(path, "etc/ssm.d/self")
+        self.selfpath = self.joinpath("etc/ssm.d/self")
         if os.path.islink(self.selfpath):
             self.path = os.readlink(self.selfpath)
-        self.installed_path = os.path.join(self.path, "etc/ssm.d/installed")
-        self.published_path = os.path.join(self.path, "etc/ssm.d/published")
-        self.meta_path = os.path.join(self.path, "etc/ssm.d/meta.json")
+        self.installed_path = self.joinpath("etc/ssm.d/installed")
+        self.published_path = self.joinpath("etc/ssm.d/published")
+        self.meta_path = self.joinpath("etc/ssm.d/meta.json")
 
         self.meta = None
         self.legacy = None
@@ -107,7 +107,7 @@ class Domain:
 
     def exists(self):
         return os.path.isdir(self.path) \
-            and os.path.isdir(os.path.join(self.path, "etc/ssm.d"))
+            and os.path.isdir(self.joinpath("etc/ssm.d"))
 
     def get_dependents(self, pkg, platform):
         """Return list of packages dependent on the given one
@@ -129,7 +129,7 @@ class Domain:
 
     def get_installed(self, name):
         try:
-            pkg = Package(os.path.join(self.path, name))
+            pkg = Package(self.joinpath(name))
             return pkg.exists() and pkg or None
         except:
             return None
@@ -147,14 +147,14 @@ class Domain:
         for platform in platforms:
             _, dirnames, _ = oswalk1(os.path.join(self.installed_path, platform))
             for dirname in dirnames:
-                pkgs.append(Package(os.path.abspath(os.path.join(self.path, dirname))))
+                pkgs.append(Package(os.path.abspath(self.joinpath(dirname))))
         return pkgs
 
     def get_installeds_legacy(self, platforms=None):
         pkgs = []
         _, dirnames, _ = oswalk1(self.installed_path)
         for dirname in dirnames:
-            pkgs.append(Package(os.path.abspath(os.path.join(self.path, dirname))))
+            pkgs.append(Package(os.path.abspath(self.joinpath(dirname))))
         if platforms:
             platforms = dict([(platform, None) for platform in platforms])
             pkgs = [pkg for pkg in pkgs if pkg.platform in platforms]
@@ -241,7 +241,7 @@ class Domain:
         return RepositoryGroup([repourl])
 
     def get_version_legacy(self):
-        return gets(os.path.join(self.path, "etc/ssm.d/version"))
+        return gets(self.joinpath("etc/ssm.d/version"))
 
     def has_meta(self):
         return os.path.exists(self.meta_path)
@@ -287,9 +287,9 @@ class Domain:
         if self.exists() and not force:
             return Error("domain already exists")
         for dirname in [".", "etc/ssm.d/broken", "etc/ssm.d/installed", "etc/ssm.d/published",]:
-            path = os.path.join(self.path, dirname)
+            path = self.joinpath(dirname)
             if not os.path.isdir(path):
-                misc.makedirs(os.path.join(self.path, dirname))
+                misc.makedirs(path)
         os.symlink(self.path, self.selfpath)
         self.put_meta(meta)
 
@@ -298,7 +298,7 @@ class Domain:
             return Error("must own domain")
         if pkgfile.is_valid() < 0:
             return Error("package file is not valid")
-        pkg = Package(os.path.join(self.path, pkgfile.name))
+        pkg = Package(self.joinpath(pkgfile.name))
         if self.is_installed(pkg) and (not reinstall or not force):
             return Error("package already installed")
         try:
@@ -349,16 +349,16 @@ class Domain:
                 if err:
                     return err
         try:
-            pubplatpath = os.path.join(self.path, platform)
+            pubplatpath = self.joinpath(platform)
             for pubdirname in constants.PUBLISHABLE_DIRS:
-                for root, dirnames, filenames in os.walk(os.path.join(pkg.path, pubdirname)):
+                for root, dirnames, filenames in os.walk(pkg.joinpath(pubdirname)):
                     relpath = os.path.join(root)[len(pkg.path)+1:]
                     pubbasedir = os.path.join(pubplatpath, relpath)
                     if not os.path.exists(pubbasedir):
                         misc.makedirs(pubbasedir)
                     for dirname in dirnames:
                         # TODO: support ./.../.
-                        #misc.makedirs(os.path.join(self.path, relpath, dirname))
+                        #misc.makedirs(self.joinpath(relpath, dirname))
                         pubsubdir = os.path.join(pubbasedir, dirname)
                         if not os.path.exists(pubsubdir):
                             misc.makedirs(os.path.join(pubbasedir, dirname))
@@ -394,7 +394,7 @@ class Domain:
         if not self.is_published(pkg, [platform]) and not globls.force:
             return Error("package is not published")
         try:
-            pubplatpath = os.path.join(self.path, platform)
+            pubplatpath = self.joinpath(platform)
             for pubdirname in constants.PUBLISHABLE_DIRS:
                 # TODO: implement os.walk() for older pythons
                 pubdirpath = os.path.join(pubplatpath, pubdirname)
@@ -402,7 +402,7 @@ class Domain:
                     rmcount = 0
                     for filename in filenames:
                         linkname = os.path.join(root, filename)
-                        pkgfilepath = os.path.join(pkg.path, root[len(pubplatpath)+1:], filename)
+                        pkgfilepath = pkg.joinpath(root[len(pubplatpath)+1:], filename)
                         if os.path.realpath(linkname) == os.path.realpath(pkgfilepath):
                             misc.remove(linkname)
                             rmcount += 1

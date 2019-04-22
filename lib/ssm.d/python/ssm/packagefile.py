@@ -123,7 +123,7 @@ class PackageFileSkeleton(PackageFile):
 
             if "pubdirs" in self.components:
                 for name in PUBLISHABLE_DIRS:
-                    path = os.path.join(pkg.path, name)
+                    path = pkg.joinpath(name)
                     if not os.path.exists(path):
                         os.makedirs(path)
         except:

@@ -144,7 +144,7 @@ def run(args):
                 skeleton_comps = SKELETON_COMPS
             pkgf = PackageFileSkeleton(pkgfpath, skeleton_comps)
         elif srcdir:
-            pkg = Package(os.path.join(dompath, pkgname))
+            pkg = Package(dom.joinpath(pkgname))
             if os.path.exists(pkg.path) and (not reinstall or not globls.force):
                 exits("error: package is installed")
 
@@ -161,7 +161,7 @@ def run(args):
                 if "/" in name:
                     stderr.write("warning: name (%s) cannot be installed\n" % name)
                 srcpath = os.path.join(srcdir, name)
-                dstpath = os.path.join(pkg.path, name)
+                dstpath = pkg.joinpath(name)
                 if not os.path.exists(srcpath):
                     # skip?
                     pass

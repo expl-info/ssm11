@@ -165,7 +165,7 @@ def run(args):
 
                 pkgfiles = []
                 for pkgname in srcinv["installed"]:
-                    pkgpath = os.path.join(dstdom.path, pkgname)
+                    pkgpath = dstdom.joinpath(pkgname)
                     if dstdom.is_installed(Package(pkgpath)) and not installedoverwrite:
                         # skip already installed package
                         continue
@@ -190,7 +190,7 @@ def run(args):
                     platpublished = srcinv["published"].get(plat, [])
                     for pkgname in platpublished:
                         if published:
-                            pkgpath = os.path.join(dstdom.path, pkgname)
+                            pkgpath = dstdom.joinpath(pkgname)
                         else:
                             pkgpath = platpublished[pkgname]
                         pkg = Package(pkgpath)
