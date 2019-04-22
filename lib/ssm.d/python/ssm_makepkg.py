@@ -38,6 +38,7 @@ from ssm import misc
 from ssm.control import Control
 from ssm.misc import exits, gid2groupname, uid2username
 from ssm.package import Package
+from ssm.packagefile import PackageFile
 
 def print_usage():
     print("""\
@@ -141,8 +142,8 @@ def run(args):
             def filefilter(ti):
                 return ti.name not in excluded and ti or None
 
-            pkgfpath = "%s.ssm" % (pkgname,)
-            tf = tarfile.open(pkgfpath, "w|gz")
+            pkgf = PackageFile("%s.ssm" % (pkgname,))
+            tf = tarfile.open(pkgf.path, "w|gz")
             tf.add(srcdir, pkgname, recursive=True, filter=filefilter)
 
             # special case for control.json
@@ -161,8 +162,8 @@ def run(args):
 
             tf.close()
         except:
-            if os.path.exists(pkgfpath):
-                misc.remove(pkgfpath)
+            if pkgf.exists():
+                misc.remove(pkgf.path)
             raise
     except SystemExit:
         raise

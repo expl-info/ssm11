@@ -226,14 +226,14 @@ def run(args):
             if pkg:
                 print "info: package (%s) already installed" % (pkg.name,)
             else:
-                pkgfpath = os.path.join(repourl, builder.name+".ssm")
-                if not os.path.exists(pkgfpath):
+                pkgf = PackageFile(os.path.join(repourl, builder.name+".ssm"))
+                if not pkgf.exists():
                     print "info: building package (%s)" % (builder.name,)
                     pkgfpath = err = builder.run()
                     if isinstance(err, Error):
                         exits(err)
+                    pkgf = PackageFile(pkgfpath)
 
-                pkgf = PackageFile(pkgfpath)
                 if not pkgf.is_valid():
                     exits("error: bad package file")
 
