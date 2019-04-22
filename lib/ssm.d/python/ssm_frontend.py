@@ -33,7 +33,7 @@ usage: ssm <cmd> [<args>]
 Simple Software Manager.
 
 List operations:
-    ssm invd|listd [<args>]
+    ssm diffd|invd|listd [<args>]
 
 Package management:
     ssm install|publish|uninstall|unpublish [<args>]
@@ -68,7 +68,8 @@ if __name__ == "__main__":
         import ssm_cloned
         ssm_cloned.run(args)
     elif cmd == "diffd":
-        print("NIY")
+        import ssm_diffd
+        ssm_diffd.run(args)
     elif cmd == "find":
         import ssm_find
         ssm_find.run(args)
