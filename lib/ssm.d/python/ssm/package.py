@@ -30,7 +30,6 @@ import traceback
 
 from ssm import globls
 from ssm.control import Control
-from ssm.error import Error
 from ssm.misc import oswalk1, puts
 
 def determine_platform(pkg=None):

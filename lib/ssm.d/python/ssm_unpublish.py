@@ -30,9 +30,10 @@ import sys
 from sys import stderr
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import globls
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.misc import exits
 from ssm.package import determine_platform, split_pkgref, Package
 
@@ -118,7 +119,7 @@ def run(args):
         if not pkg and not globls.force:
             exits("error: package is not published")
         deppkgs = err = dom.get_dependents(pkg, pubplat)
-        if isinstance(err, Error):
+        if is_error(err):
             exits(err)
         if len(deppkgs) > 1 and not globls.force:
             depnames = [deppkg.name for deppkg in deppkgs]
@@ -128,7 +129,7 @@ def run(args):
                 exits("aborting operation")
         for deppkg in deppkgs:
             err = dom.unpublish(deppkg, pubplat)
-            if err:
+            if is_error(err):
                 exits(err)
     except SystemExit:
         raise

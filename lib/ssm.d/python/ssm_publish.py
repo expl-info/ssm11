@@ -30,9 +30,10 @@ import sys
 from sys import stderr
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import globls
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.misc import exits
 from ssm.package import determine_platform, split_pkgref
 
@@ -133,7 +134,7 @@ def run(args):
         pubpkg = pubdom.get_published_short(pkg.name, pubplat)
         if pubpkg:
             deppkgs = err = pubdom.get_dependents(pubpkg, pubplat)
-            if isinstance(err, Error):
+            if is_error(err):
                 exits(err)
             if len(deppkgs) > 1 and not globs.force:
                 depnames = [deppkg.name for deppkg in deppkgs]
@@ -143,14 +144,14 @@ def run(args):
                     exits("aborting operation")
             for deppkg in deppkgs:
                 err = pubdom.unpublish(deppkg, pubplat)
-                if err:
+                if is_error(err):
                     exits(err)
 
         err = pubdom.prepublish(pkg, pubplat)
-        if isinstance(err, Error):
+        if is_error(err):
             exits(err)
         err = pubdom.publish(pkg, pubplat, globls.force)
-        if err:
+        if is_error(err):
             exits(err)
     except SystemExit:
         raise

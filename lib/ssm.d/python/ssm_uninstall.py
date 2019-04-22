@@ -29,9 +29,10 @@ import sys
 from sys import stderr
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import globls
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.package import split_pkgref, Package
 from ssm.misc import exits
 
@@ -106,7 +107,7 @@ def run(args):
             exits("error: old domain not supported; you may want to upgrade")
 
         err = dom.uninstall(pkg)
-        if err:
+        if is_error(err):
             exits(err)
     except SystemExit:
         raise

@@ -27,11 +27,12 @@ import string
 import tarfile
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm.constants import *
 from ssm import globls
 from ssm import misc
 from ssm.control import Control
-from ssm.error import Error
 from ssm.package import Package
 
 class PackageFile:

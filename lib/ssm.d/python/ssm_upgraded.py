@@ -30,12 +30,13 @@ import sys
 from sys import stderr
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import constants
 from ssm import globls
 from ssm import misc
 from ssm.control import Control
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.meta import Meta
 from ssm.misc import exits
 from ssm.package import Package
@@ -161,7 +162,7 @@ def upgrade_legacy(dompath, components):
 
             print "upgrading domain metadata"
             err = dom.create(meta, True)
-            if err:
+            if is_error(err):
                 exits(err)
 
         if "control" in components:

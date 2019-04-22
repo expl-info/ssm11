@@ -31,11 +31,12 @@ from sys import stderr
 import tarfile
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import globls
 from ssm.builder import Builder
 from ssm.deps import DependencyManager
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.misc import exits
 from ssm.packagefile import PackageFile
 
@@ -230,7 +231,7 @@ def run(args):
                 if not pkgf.exists():
                     print "info: building package (%s)" % (builder.name,)
                     pkgfpath = err = builder.run()
-                    if isinstance(err, Error):
+                    if is_error(err):
                         exits(err)
                     pkgf = PackageFile(pkgfpath)
 
@@ -240,7 +241,7 @@ def run(args):
                 if doinstall:
                     print "info: installing package file (%s)" % (pkgf.name,)
                     err = dom.install(pkgf, globls.force)
-                    if err:
+                    if is_error(err):
                         exits(err)
 
             if dopublish:
@@ -250,7 +251,7 @@ def run(args):
                 else:
                     print "info: publishing package (%s) to platform (%s)" % (pkg.name, platform)
                     err = dom.publish(pkg, platform, globls.force)
-                    if err:
+                    if is_error(err):
                         exits(err)
     except SystemExit:
         raise
@@ -263,7 +264,7 @@ def run(args):
 def buildpkg(workdir, bssmpath, sourcesurl, dompath, repourl, platform, initfile=None, initpkg=None):
     b = Builder(workdir, bssmpath, sourcesurl, dompath, repourl, platform, initfile, initpkg)
     pkgfpath, err = b.run()
-    if err:
+    if is_error(err):
         # cleanup
         return None, err
     return pkgfpath, None

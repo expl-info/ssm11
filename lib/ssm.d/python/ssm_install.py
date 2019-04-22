@@ -29,11 +29,12 @@ import sys
 from sys import stderr
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm.constants import SKELETON_COMPS
 from ssm import globls
 from ssm import misc
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.misc import exits
 from ssm.package import Package
 from ssm.packagefile import PackageFile, PackageFileSkeleton
@@ -183,7 +184,7 @@ def run(args):
             exits("error: cannot find package")
 
         err = dom.install(pkgf, globls.force, reinstall=reinstall)
-        if err:
+        if is_error(err):
             exits(err)
     except SystemExit:
         raise

@@ -27,11 +27,12 @@ import sys
 import tarfile
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import constants
 from ssm import globls
 from ssm.deps import DependencyManager
 from ssm import misc
-from ssm.error import Error
 from ssm.meta import Meta
 from ssm.misc import gets, oswalk1, puts
 from ssm.package import Package
@@ -301,7 +302,7 @@ class Domain:
             return Error("package already installed")
         try:
             err = pkgfile.unpack(self.path)
-            if isinstance(err, Error):
+            if is_error(err):
                 # TODO: clean up? set broken?
                 return err
             pkg.execute_script("post-install", self.path)
@@ -344,7 +345,7 @@ class Domain:
                 return Error("package is already published")
             else:
                 err = self.unpublish(pkg, platform)
-                if err:
+                if is_error(err):
                     return err
         try:
             pubplatpath = self.joinpath(platform)

@@ -31,9 +31,10 @@ import sys
 from sys import stderr, stdout
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import globls
 from ssm.domain import Domain
-from ssm.error import Error
 from ssm.misc import columnize, exits, get_terminal_size
 from ssm.package import determine_platforms
 

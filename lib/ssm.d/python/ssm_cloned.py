@@ -29,6 +29,8 @@ import sys
 from sys import stderr
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import constants
 from ssm import globls
 from ssm.domain import Domain
@@ -151,7 +153,7 @@ def run(args):
 
                 print "creating dstdom (%s) ... " % (dstdom.path,),
                 err = dstdom.create(meta, globls.force)
-                if err:
+                if is_error(err):
                     print "fail"
                     exits(err)
                 print "ok"
@@ -178,7 +180,7 @@ def run(args):
                 for pkgf in pkgfiles:
                     print "installing package (%s) ... " % (pkgf.name,),
                     err = dstdom.install(pkgf, globls.force)
-                    if err:
+                    if is_error(err):
                         print "fail"
                         exits(err)
                     print "ok"
@@ -199,14 +201,14 @@ def run(args):
                         if dpkg:
                             print "unpublishing package (%s) ... " % (dpkg.name,),
                             err = dstdom.unpublish(dpkg, plat)
-                            if err:
+                            if is_error(err):
                                 print "fail"
                                 exits(err)
                             print "ok"
 
                         print "publishing package (%s) (%s) ... " % (pkg.name, published and "installed" or "source"),
                         err = dstdom.publish(pkg, plat, globls.force)
-                        if err:
+                        if is_error(err):
                             print "fail"
                             exits(err)
                         print "ok"

@@ -31,7 +31,8 @@ import tempfile
 import time
 import traceback
 
-from ssm.error import Error
+from pyerrors.errors import Error, is_error
+
 from ssm import misc
 
 class Builder:
@@ -139,6 +140,6 @@ class Builder:
 
     def run(self):
         pkgfpath = err = self.__get_from_repo()
-        if not isinstance(err, Error):
+        if is_error(err):
             return pkgfpath
         return self.__build_from_source()

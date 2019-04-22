@@ -28,6 +28,8 @@ import os.path
 import sys
 import traceback
 
+from pyerrors.errors import Error, is_error
+
 from ssm import constants
 from ssm import globls
 from ssm.domain import Domain
@@ -102,7 +104,7 @@ def run(args):
                 exits("error: domain path does not match domain realpath")
 
         err = dom.create(meta, globls.force)
-        if err:
+        if is_error(err):
             exits(err)
     except SystemExit:
         raise
