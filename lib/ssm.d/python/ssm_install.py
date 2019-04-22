@@ -167,8 +167,8 @@ def run(args):
                     pass
                 misc.symlink(srcpath, dstpath, force=True)
 
-            # force install even with something at pkg.path
-            globls.force = True
+            # quiet complaint of existing pkg path
+            reinstall = True
         else:
             if repourl:
                 repo = RepositoryGroup([repourl])
