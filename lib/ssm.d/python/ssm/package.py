@@ -80,12 +80,15 @@ def split_pkgref(pkgref):
 
 class Package:
 
-    def __init__(self, path):
+    def __init__(self, path, splitname=True):
         path = os.path.abspath(path)
         self.path = path
         self.realpath = os.path.realpath(path)
         self.name = os.path.basename(path)
-        self.short, self.version, self.platform = self.name.split("_", 2)
+        if splitname:
+            self.short, self.version, self.platform = self.name.split("_", 2)
+        else:
+            self.short, self.version, self.platform = self.name, None, None
         self.control_path = self.joinpath(".ssm.d/control.json")
         self.control_path_legacy = self.joinpath(".ssm.d/control")
 
