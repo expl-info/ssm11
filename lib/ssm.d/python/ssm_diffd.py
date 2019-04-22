@@ -65,6 +65,7 @@ Where:
 <rdompath>      Path of right domain
 
 Options:
+--meta          Compare meta information
 --installed     Compare installed
 --published     Compare published
 
@@ -82,6 +83,8 @@ def run(args):
             arg = args.pop(0)
             if arg == "--installed":
                 compares.append("installed")
+            elif arg == "--meta":
+                compares.append("meta")
             elif arg == "--published":
                 compares.append("published")
 
@@ -123,6 +126,22 @@ def run(args):
 
         linvd = doms[0].get_inventory()
         rinvd = doms[1].get_inventory()
+
+        if "meta" in compares:
+            # compare values of each meta item
+            lmeta = linvd["meta"]
+            rmeta = rinvd["meta"]
+            lnames = set(lmeta)
+            rnames = set(rmeta)
+            names = sorted(lnames.union(rnames))
+            for name in names:
+                lvalue = lmeta.get(name)
+                rvalue = rmeta.get(name)
+                if lvalue == rvalue:
+                    print "%s M %s '%s'" % (DIFFMARKD[0], name, lvalue)
+                else:
+                    print "%s M %s '%s'" % (DIFFMARKD[-1], name, lvalue)
+                    print "%s M %s '%s'" % (DIFFMARKD[1], name, rvalue)
 
         if "installed" in compares:
             lnames = set(linvd["installed"])
