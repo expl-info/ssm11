@@ -204,8 +204,8 @@ def run(args):
         if showall or showmissing:
             for builder in builders:
                 if showmissing:
-                    if dom.get_installed(builder.name) \
-                        or dom.get_published(builder.name, platform):
+                    if dom.get_installed_package(builder.name) \
+                        or dom.get_published_package(builder.name, platform):
                         continue
                 print builder.name
 
@@ -218,12 +218,12 @@ def run(args):
                 # special
                 continue
 
-            pkg = dom.get_published(builder.name, platform)
+            pkg = dom.get_published_package(builder.name, platform)
             if pkg:
                 print "info: package (%s) already published" % (pkg.name,)
                 continue
 
-            pkg = dom.get_installed(builder.name)
+            pkg = dom.get_installed_package(builder.name)
             if pkg:
                 print "info: package (%s) already installed" % (pkg.name,)
             else:
@@ -245,7 +245,7 @@ def run(args):
                         exits(err)
 
             if dopublish:
-                pkg = dom.get_installed(builder.name)
+                pkg = dom.get_installed_package(builder.name)
                 if pkg and dom.is_published(pkg, [platform]):
                     print "info: package (%s) already published" % (pkg.name,)
                 else:

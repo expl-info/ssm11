@@ -54,7 +54,7 @@ class Domain:
 
     def __create_depmgr(self, platforms):
         dm = DependencyManager()
-        for pkg in self.get_publisheds(platforms):
+        for pkg in self.get_published_packages(platforms):
             control = pkg.get_control()
             dm.add(control.get("name"),
                 control.get("version"),
@@ -113,7 +113,7 @@ class Domain:
         """Return list of packages dependent on the given one
         published for the platform.
         """
-        ppkgs = self.get_publisheds([platform])
+        ppkgs = self.get_published_packages([platform])
         short2ppkg = dict([(ppkg.short, ppkg) for ppkg in ppkgs])
 
         pkgs = []
@@ -127,7 +127,7 @@ class Domain:
             pkgs = []
         return pkgs
 
-    def get_installed(self, name):
+    def get_installed_package(self, name):
         try:
             pkg = Package(self.joinpath(name))
             return pkg.exists() and pkg or None
@@ -138,9 +138,9 @@ class Domain:
         root, platforms, _ = oswalk1(self.installed_path)
         return platforms
 
-    def get_installeds(self, platforms=None):
+    def get_installed_packages(self, platforms=None):
         if self.is_legacy():
-            return self.get_installeds_legacy(platforms)
+            return self.get_installed_packages_legacy(platforms)
 
         platforms = platforms or self.get_installed_platforms()
         pkgs = []
@@ -150,7 +150,7 @@ class Domain:
                 pkgs.append(Package(os.path.abspath(self.joinpath(dirname))))
         return pkgs
 
-    def get_installeds_legacy(self, platforms=None):
+    def get_installed_packages_legacy(self, platforms=None):
         pkgs = []
         _, dirnames, _ = oswalk1(self.installed_path)
         for dirname in dirnames:
@@ -187,7 +187,7 @@ class Domain:
         meta.load(self.meta_path)
         return meta
 
-    def get_published(self, name, platform=None):
+    def get_published_package(self, name, platform=None):
         try:
             pkg = Package(name)
             ppkg = Package(os.path.join(self.published_path, platform or pkg.platform, name))
@@ -195,7 +195,7 @@ class Domain:
         except:
             return None
 
-    def get_published_short(self, name, platform=None):
+    def get_published_package_short(self, name, platform=None):
         try:
             pkg = Package(name)
             platform = platform or pkg.platform
@@ -213,7 +213,7 @@ class Domain:
         _, platforms, _ = oswalk1(self.published_path)
         return platforms
 
-    def get_publisheds(self, platforms=None):
+    def get_published_packages(self, platforms=None):
         pkgs = []
         platforms = platforms or self.get_published_platforms()
         for platform in platforms:
@@ -222,7 +222,7 @@ class Domain:
                 pkgs.append(Package(os.path.abspath(os.path.join(root, dirname))))
         return pkgs
 
-    def get_publisheds_legacy(self, platforms=None):
+    def get_published_packages_legacy(self, platforms=None):
         root, dirnames, _ = oswalk1(self.published_path)
         pkgs = [Package(os.path.abspath(os.path.join(root, dirname))) for dirname in dirnames]
         if platforms:
@@ -246,7 +246,7 @@ class Domain:
         return os.path.exists(self.meta_path)
 
     def is_installed(self, pkg):
-        ipkg = self.get_installed(pkg.name)
+        ipkg = self.get_installed_package(pkg.name)
         return ipkg and ipkg.path == pkg.path
 
     def is_legacy(self):
@@ -273,7 +273,7 @@ class Domain:
             return False
         platforms = platforms or self.get_published_platforms()
         for platform in platforms:
-            ppkg = self.get_published(pkg.name, platform)
+            ppkg = self.get_published_package(pkg.name, platform)
             if ppkg and ppkg.realpath == pkg.realpath:
                 return True
         return False
@@ -315,7 +315,7 @@ class Domain:
     def prepublish(self, pkg, platform):
         """Check that a package could be published.
         """
-        ppkgs = self.get_publisheds([platform])
+        ppkgs = self.get_published_packages([platform])
         short2ppkg = dict([(ppkg.short, ppkg) for ppkg in ppkgs])
 
         try:

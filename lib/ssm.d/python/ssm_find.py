@@ -205,12 +205,12 @@ def run(args):
                                 print "----- domain (%s) -----" % (dom.path,)
                             continue
 
-                        installeds = dom.get_installeds(platforms)
+                        installeds = dom.get_installed_packages(platforms)
                         stats_npkginsts += len(installeds)
                         name2installeds = dict([(pkg.name, pkg) for pkg in installeds
                             if not pkgcre or pkgcre.match(pkg.name)])
 
-                        publisheds = dom.get_publisheds(platforms)
+                        publisheds = dom.get_published_packages(platforms)
                         stats_npkgpubs += len(publisheds)
                         name2publisheds = dict([(pkg.name, pkg) for pkg in publisheds
                             if not pkgcre or pkgcre.match(pkg.name)])

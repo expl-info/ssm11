@@ -98,7 +98,7 @@ def run(args):
     try:
         if dompath:
             dom = Domain(dompath)
-            pkg = dom.get_installed(pkgname)
+            pkg = dom.get_installed_package(pkgname)
 
         if not dom.exists() or pkg == None:
             exits("error: cannot find domain/package")

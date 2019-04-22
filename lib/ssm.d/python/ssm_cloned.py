@@ -197,7 +197,7 @@ def run(args):
                             pkgpath = platpublished[pkgname]
                         pkg = Package(pkgpath)
 
-                        dpkg = dstdom.get_published_short(pkg.name, plat)
+                        dpkg = dstdom.get_published_package_short(pkg.name, plat)
                         if dpkg:
                             print "unpublishing package (%s) ... " % (dpkg.name,),
                             err = dstdom.unpublish(dpkg, plat)

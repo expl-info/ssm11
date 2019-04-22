@@ -124,14 +124,14 @@ def run(args):
         if pubmeta.get("version") == None:
             exits("error: old domain not supported; you may want to upgrade")
 
-        pkg = dom.get_installed(pkgname)
+        pkg = dom.get_installed_package(pkgname)
         if not pkg:
             exits("error: package not installed")
 
         pubplat = pubplat or determine_platform(pkg)
         if not pubplat:
             exits("error: cannot determine platform")
-        pubpkg = pubdom.get_published_short(pkg.name, pubplat)
+        pubpkg = pubdom.get_published_package_short(pkg.name, pubplat)
         if pubpkg:
             deppkgs = err = pubdom.get_dependents(pubpkg, pubplat)
             if is_error(err):
