@@ -37,6 +37,7 @@ from ssm import globls
 from ssm import misc
 from ssm.control import Control
 from ssm.misc import exits, gid2groupname, uid2username
+from ssm.package import Package
 
 def print_usage():
     print("""\
