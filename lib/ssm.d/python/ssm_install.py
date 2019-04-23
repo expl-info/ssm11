@@ -36,15 +36,15 @@ from ssm import globls
 from ssm import misc
 from ssm.domain import Domain
 from ssm.misc import exits
-from ssm.package import Package
+from ssm.package import Package, split_pkgref
 from ssm.packagefile import PackageFile, PackageFileSkeleton
 from ssm.repository import RepositoryGroup
 
 def print_usage():
     print("""\
 usage: ssm install [<options>] -d <dompath> -f <pkgfile>
-       ssm install [<options>] -d <dompath> -p <pkgname>
-       ssm install [<options>] -d <dompath> -p <pkgname> -s <srcdir>
+       ssm install [<options>] (-d <dompath> -p <pkgname> | -x <pkgref>)
+       ssm install [<options>] (-d <dompath> -p <pkgname> | -x <pkgref>) -s <srcdir>
        ssm install -h|--help
 
 Install package to domain. Package contents may come from a package
@@ -55,6 +55,7 @@ Where:
 <dompath>       Domain path.
 <pkgfile>       Package file (ending in .ssm).
 <pkgname>       Package name (found in repository or in domain).
+<pkgref>        Package reference for domain and package.
 <srcdir>        Source directory from which to install.
 
 Options:
@@ -76,8 +77,9 @@ def run(args):
     try:
         dompath = None
         names = None
-        pkgname = None
         pkgfpath = None
+        pkgname = None
+        pkgref = None
         reinstall = False
         repourl = None
         skeleton = False
@@ -87,6 +89,7 @@ def run(args):
             arg = args.pop(0)
             if arg == "-d" and args:
                 dompath = args.pop(0)
+                pkgref = None
             elif arg == "-f" and args:
                 pkgfpath = args.pop(0)
                 pkgname = None
@@ -95,6 +98,7 @@ def run(args):
             elif arg == "-p" and args:
                 pkgname = args.pop(0)
                 pkgfpath = None
+                pkgref = None
             elif arg == "-r" and args:
                 repourl = args.pop(0)
             elif arg == "--reinstall":
@@ -105,6 +109,8 @@ def run(args):
             elif arg == "--skeleton":
                 skeleton = True
                 srcdir = None
+            elif arg == "-x" and args:
+                pkgref = args.pop(0)
 
             elif arg in ["-h", "--help"]:
                 print_usage()
@@ -117,6 +123,9 @@ def run(args):
                 globls.verbose = True
             else:
                 raise Exception()
+
+        if pkgref:
+            dompath, pkgname, _ = split_pkgref(pkgref)
 
         if not dompath \
             or (not pkgname and not pkgfpath):
