@@ -49,16 +49,16 @@ usage: ssm upgraded [<options>] -d <dompath>
 Upgrade domain to current version.
 
 Where:
-<dompath>       Path for domain
+<dompath>       Domain path.
 
 Options:
--c <name>[,...] Component names that need upgrading; the default is
-                all: meta,control,installed,published,old-files,old-dirs
---legacy        Upgrade applies to a legacy domain (v10 and before)
+-c <name>[,...] Component names that need upgrading. Default is all:
+                meta,control,installed,published,old-files,old-dirs.
+--legacy        Upgrade applies to a legacy domain (v10 and before).
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

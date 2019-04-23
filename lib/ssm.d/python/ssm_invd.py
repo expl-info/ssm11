@@ -50,11 +50,11 @@ Warning:
     releases. Do *not* depend on it remaining the same.
 
 Where:
-<dompath>       Path for domain
+<dompath>       Domain path.
 
 Options:
---debug         Enable debugging
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

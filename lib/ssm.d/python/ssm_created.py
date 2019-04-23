@@ -44,15 +44,15 @@ usage: ssm created [<options>] -d <dompath>
 Create a new domain at dompath.
 
 Where:
-<dompath>       Path for domain
+<dompath>       Domain path.
 
 Options:
--L <string>     Short label for domain
--r <url>        Repository URL
+-L <string>     Short label for domain.
+-r <url>        Repository URL.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

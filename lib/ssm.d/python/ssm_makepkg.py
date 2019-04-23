@@ -48,17 +48,17 @@ usage: ssm makepkg [<options>] <dir>
 Make a package from the contents of a directory.
 
 Where:
-<dir>           Directory to be packaged
+<dir>           Directory to be packaged.
 
 Options:
---auto-control  Generate minimal control.json; overrides existing
-                control file information if available
--p <pkgname>    Use an alternate package name; implies
-                --auto-control
+--auto-control  Generate minimal control.json. Overrides existing
+                control file information if available.
+-p <pkgname>    Use an alternate package name. Implies
+                --auto-control.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

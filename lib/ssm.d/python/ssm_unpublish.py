@@ -45,16 +45,16 @@ usage: ssm publish [<options>] -d <dompath> -p <pkgname>
 Unpublish package from domain.
 
 Where:
-<dompath>       Domain path
-<pkgname>       Package name
+<dompath>       Domain path.
+<pkgname>       Package name.
 
 Options:
--pp <platform>  Alternate platform to unpublish from; default is the
-                package platform or SSMUSE_PLATFORM
+-pp <platform>  Alternate platform to unpublish from. Default is the
+                package platform or SSMUSE_PLATFORM.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

@@ -42,36 +42,38 @@ from ssm.repository import Repository
 
 def print_usage():
     print("""\
-usage: ssm cloned [<options>] [<srcdom> ...] <dstdom>
+usage: ssm cloned [<options>] [<srcdompath> ...] <dstdompath>
        ssm cloned -h|--help
 
-Clone one or more existing domains. If <dstdom> does not exist, it
-will be created using the meta information from <srcdom> domain.
+Clone one or more existing domains. If <dstdompath> does not exist,
+it will be created using the meta information from <srcdompath>
+domain.
 
 Packages are installed from the repository. Packages that are
-installed to <dstdom> are published from <dstdom> except if
+installed to <dstdompath> are published from <dstdompath> except if
 --published-src is specified, at which point they are published from
-the same domain used in <srcdom>.
+the same domain used in <srcdompath>.
 
 By default, only --published-src is set. 
 
 Where:
-<dstdom>        Path of destination domain
-<srcdom>        Path of source domain
+<dstdompath>    Destination domain path.
+<srcdompath>    Source domain path.
 
 Options:
---installed     Clone installed packages
---published     Clone published packages
---published-src Clone published packages from <srcdom> rather than
-                from <dstdom>. Defaults to on
--L <string>     Short label for domain
+--installed     Clone installed packages.
+--published     Clone published packages.
+--published-src Clone published packages from <srcdompath> rather
+                than from <dstdompath>. Defaults to on.
+-L <string>     Short label for domain.
 -pp <platform>[,..]
-                Limit the publishing to specific platforms
+                Limit the publishing to specific platforms.
 -r <url>        Alternate repository URL overriding the one from
-                <srcdom>
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+                <srcdompath>.
+
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

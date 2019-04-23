@@ -52,25 +52,25 @@ file, a package in a repository, a source directory, or a skeleton
 package only.
 
 Where:
-<dompath>       Domain path
-<pkgfile>       Package file (ending in .ssm)
-<pkgname>       Package name found in repository
-<srcdir>        Source directory from which to install
+<dompath>       Domain path.
+<pkgfile>       Package file (ending in .ssm).
+<pkgname>       Package name (found in repository or in domain).
+<srcdir>        Source directory from which to install.
 
 Options:
 --names <name>[,...]
                 CSV list of top-lvel object names to import.
                 Default is all in the <srcdir>. For use with -s
                 only.
--r <url>        Repository URL
---reinstall     Allow install over existing installation
+-r <url>        Repository URL.
+--reinstall     Allow install over existing installation.
 --skeleton      Install package skeleton (control.json, etc). No
                 package or package file is required. For use with
                 -p only.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

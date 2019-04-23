@@ -54,24 +54,24 @@ def diff_value(value, lvalues, rvalues):
 
 def print_usage():
     print("""\
-usage: ssm diffd [<options>] [<srcdom> ...] <dstdom>
+usage: ssm diffd [<options>] <ldompath> <rdompath>
        ssm diffd -h|--help
 
 Compare two domains and show the differences. Default is to compare
-installed and published.
+installed and published packages.
 
 Where:
-<ldompath>      Path of left domain
-<rdompath>      Path of right domain
+<ldompath>      Left domain path.
+<rdompath>      Right domain path.
 
 Options:
---meta          Compare meta information
---installed     Compare installed
---published     Compare published
+--meta          Compare domain meta information.
+--installed     Compare installed package list.
+--published     Compare published package list.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

@@ -74,20 +74,20 @@ usage: ssm find [<options>] [<path> ...]
 Find SSM objects. Use <path> as the starting point for the search.
 Otherwise, use the paths in SSMUSE_PATH, if available.
 
-Patterns support wildcards: * (zero or more) and ? (single) character
-match.
+Patterns support wildcards: * (zero or more) and ? (single)
+character match.
 
 Options:
--1              Output in single column
--d <pattern>    Domain path pattern; default is match all (*)
--p <pattern>    Package name pattern; default is match all (*)
--pp <pattern>   Platform pattern; default is list taken from
-                SSM_PLATFORMS or SSMUSE_PLATFORMS
--t <type>[,...] Search for each type. Default is domain,package
+-1              Output in single column.
+-d <pattern>    Domain path pattern. Default is match all (*).
+-p <pattern>    Package name pattern. Default is match all (*).
+-pp <pattern>   Platform pattern. Default is list taken from
+                SSM_PLATFORMS or SSMUSE_PLATFORMS.
+-t <type>[,...] Search for each type. Default is domain,package.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 FINDTYPES_ALL = ["domain", "package"]
 

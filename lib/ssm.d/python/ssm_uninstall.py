@@ -44,13 +44,13 @@ usage: ssm uninstall [<options>] -d <dompath> -p <pkgname>
 Uninstall package from domain.
 
 Where:
-<dompath>       Domain path
-<pkgname>       Package name
+<dompath>       Domain path.
+<pkgname>       Package name.
 
 Options:
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

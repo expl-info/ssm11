@@ -45,17 +45,17 @@ usage: ssm publish [<options>] -d <dompath> -p <pkgname>
 Publish package to domain.
 
 Where:
-<dompath>       Domain path
-<pkgname>       Package name found in repository
+<dompath>       Domain path.
+<pkgname>       Package name.
 
 Options:
--pp <platform>  Alternate platform to publish to; default is the
-                package platform or SSMUSE_PLATFORM
--P <dompath>    Alternate domain to publish to
+-pp <platform>  Alternate platform to publish to. Default is the
+                package platform or SSMUSE_PLATFORM.
+-P <dompath>    Alternate domain to publish to.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:

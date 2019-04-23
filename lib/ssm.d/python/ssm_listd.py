@@ -46,18 +46,18 @@ List packages in a domain. Default is to show for current platforms
 only.
 
 Where:
-<dompath>       Path for domain
+<dompath>       Domain path.
 
 Options:
--p <pattern>    Package name pattern with * and ? wilcard support;
-                default is match all (*)
--pp <pattern>   Platform pattern with * and ? wildcard support;
-                default list is taken from SSM_PLATFORMS or
-                SSMUSE_PLATFORMS
+-p <pattern>    Package name pattern with * and ? wilcard support.
+                Default is match all (*).
+-pp <pattern>   Platform pattern with * and ? wildcard support.
+                Default list is taken from SSM_PLATFORMS or
+                SSMUSE_PLATFORMS.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 #-o <field>[,...]
 #                Print selected field information (:-separated):

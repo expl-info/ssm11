@@ -78,7 +78,7 @@ def load_builders(workdir, bssmdir, sourcesurl, dompath, repourl, buildnames, pl
 
 def print_usage():
     print("""\
-usage: ssm build [<options>] -b <bssmdir> -s <sourcesurl> -d <dompath> -p <platform> <pkgname> ...
+usage: ssm build [<options>] -b <bssmdir> -s <sourcesurl> -d <dompath> -p <platform> <shortpkgname> ...
        ssm build -h|--help
 
 Perform the necessary steps to result in the named packages being
@@ -88,29 +88,29 @@ package dependencies (for build and publish) are satisfied which
 means that unspecified package may be added to the build list.
 
 Where:
-<bssmdir>       Directory containing bssm files
-<dompath>       Domain path
-<platform>      SSM platform to build for
-<sourcesurl>    URL where source files are located (BH_SOURCES_URL)
-<pkgname>       Short form package name (not including version or
-                platform)
+<bssmdir>       Directory containing bssm files.
+<dompath>       Domain path.
+<platform>      SSM platform to build for.
+<sourcesurl>    URL where source files are located (BH_SOURCES_URL).
+<shortpkgname>  Short form package name (not including version or
+                platform).
 
 Options:
---dry           Dry run; do not build
+--dry           Dry run. Do not build.
 --init-file <path>
-                File to load prior to building each package
+                File to load prior to building each package.
 --init-pkg <name>
-                Package to load prior to building each package
---install       Install after successful build
---publish       Publish and install after successful build
--r <url>        Repository URL
---show-all      Show the ordered list of all packages to build
---show-missing  Show the ordered list of missing packages to build
--w <path>       Work directory; default is current directory
+                Package to load prior to building each package.
+--install       Install after successful build.
+--publish       Publish and install after successful build.
+-r <url>        Repository URL.
+--show-all      Show the ordered list of all packages to build.
+--show-missing  Show the ordered list of missing packages to build.
+-w <path>       Work directory. Default is the current directory.
 
---debug         Enable debugging
---force         Force operation
---verbose       Enable verbose output""")
+--debug         Enable debugging.
+--force         Force operation.
+--verbose       Enable verbose output.""")
 
 def run(args):
     try:
