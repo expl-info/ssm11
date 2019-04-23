@@ -39,7 +39,7 @@ from ssm.package import determine_platform, split_pkgref
 
 def print_usage():
     print("""\
-usage: ssm publish [<options>] -d <dompath> -p <pkgname>
+usage: ssm publish [<options>] (-d <dompath> -p <pkgname> | -x <pkgref>)
        ssm publish -h|--help
 
 Publish package to domain.
@@ -47,6 +47,7 @@ Publish package to domain.
 Where:
 <dompath>       Domain path.
 <pkgname>       Package name.
+<pkgref>        Package reference for domain and package.
 
 Options:
 -pp <platform>  Alternate platform to publish to. Default is the

@@ -38,7 +38,7 @@ from ssm.misc import exits
 
 def print_usage():
     print("""\
-usage: ssm uninstall [<options>] -d <dompath> -p <pkgname>
+usage: ssm uninstall [<options>] (-d <dompath> -p <pkgname> | -x <pkgref>)
        ssm uninstall -h|--help
 
 Uninstall package from domain.
@@ -46,6 +46,7 @@ Uninstall package from domain.
 Where:
 <dompath>       Domain path.
 <pkgname>       Package name.
+<pkgref>        Package reference for domain and package.
 
 Options:
 --debug         Enable debugging.
