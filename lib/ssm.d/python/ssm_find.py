@@ -78,11 +78,13 @@ Patterns support wildcards: * (zero or more) and ? (single)
 character match.
 
 Options:
--1              Output in single column.
 -d <pattern>    Domain path pattern. Default is match all (*).
 -p <pattern>    Package name pattern. Default is match all (*).
+-P <pattern>    Pattern for domain and package. Default is match all (*).
 -pp <pattern>   Platform pattern. Default is list taken from
                 SSM_PLATFORMS or SSMUSE_PLATFORMS.
+--show-progress Show progress information.
+--show-skip     Show skipped paths.
 -t <type>[,...] Search for each type. Default is domain,package.
 
 --debug         Enable debugging.
@@ -93,14 +95,16 @@ FINDTYPES_ALL = ["domain", "package"]
 
 def run(args):
     try:
-        paths = None
-        findtypes = FINDTYPES_ALL
         displayfmt = None
         dompatt = None
+        findtypes = FINDTYPES_ALL
+        onecolumn = True
+        paths = None
         pkgpatt = None
-        platpatt = None
         platforms = determine_platforms()
-        onecolumn = False
+        platpatt = None
+        showprogress = False
+        showskip = False
         stats = False
 
         while args:
@@ -113,8 +117,14 @@ def run(args):
                 displayfmt = args.pop(0)
             elif arg == "-p" and args:
                 pkgpatt = args.pop(0)
+            elif arg == "-P" and args:
+                dompatt = pkgpatt = args.pop(0)
             elif arg == "-pp" and args:
                 platpatt = args.pop(0)
+            elif arg == "--show-progress":
+                showprogress = True
+            elif arg == "--show-skip":
+                showskip = True
             elif arg == "--stats":
                 stats = True
             elif arg == "-t" and args:
@@ -156,8 +166,9 @@ def run(args):
     domcre = None
     pkgcre = None
 
-    domcre = dompatt and re.compile(".*/%s$" % fnmatch.translate(dompatt))
+    domcre = dompatt and re.compile(fnmatch.translate(dompatt))
     pkgcre = pkgpatt and re.compile(fnmatch.translate(pkgpatt))
+    platcre = platpatt and re.compile(fnmatch.translate(platpatt))
 
     if globls.debug:
         print "stats", stats
@@ -168,14 +179,13 @@ def run(args):
         print "pkgpatt", pkgpatt
         print "pkgcre", pkgcre
         print "platpatt", platpatt
+        print "platcre", platcre
         print "findtypes", findtypes
         print "platforms", platforms
 
-    fmt = "%-4s  %-30s"
-    if onecolumn:
-        displaywidth = 1
-    else:
-        _, displaywidth = get_terminal_size()
+    fmt = "%-4s  %-26s  %-30s"
+    _, displaywidth = get_terminal_size()
+    blanksline = " "*displaywidth
 
     try:
         t0 = time.time()
@@ -184,6 +194,19 @@ def run(args):
             #print "basedir", basedir
             dw = DirWalker(basedir, dirsonly=True)
             for dirpath in dw.next():
+                eraseline = blanksline[:min(len(dirpath), displaywidth)]
+                if showprogress:
+                    print "%s\r" % dirpath[:len(eraseline)],
+
+                skippath = os.path.join(dirpath, ".skip-ssm")
+                if os.path.exists(skippath):
+                    if showskip:
+                        if showprogress:
+                            print "%s\r" % eraseline,
+                        stderr.write("skipped path (%s)\n" % dirpath)
+                    dw.skip()
+                    continue
+
                 if os.path.basename(dirpath).startswith("."):
                     dw.skip()
                     continue
@@ -193,10 +216,21 @@ def run(args):
                 if dom.exists():
                     stats_ndomains += 1
                     dw.skip()
+                    try:
+                        invd = dom.get_inventory()
+                    except:
+                        print "%s\r" % eraseline,
+                        stderr.write("error: problem with domain (%s)\n" % dom.path)
+                        continue
 
-                    if not dompatt \
-                        or (domcre and domcre.match(dom.path)):
+                    # filter domain
+                    domname = os.path.basename(dom.path)
+                    if (domcre and domcre.match(domname)) \
+                        or pkgpatt:
                         stats_ndommatches += 1
+
+                        if showprogress:
+                            print "%s\r" % eraseline,
 
                         if "package" not in findtypes:
                             if displayfmt == "csv":
@@ -205,44 +239,60 @@ def run(args):
                                 print "----- domain (%s) -----" % (dom.path,)
                             continue
 
-                        installeds = dom.get_installed_packages(platforms)
+                        installeds = set(invd.get("installed", []))
+                        publishedd = invd.get("published", {})
+                        publisheds = set([])
+
+                        if not platpatt:
+                            xplatforms = platforms
+                        else:
+                            xplatforms = set([x for x in publishedd.keys() if platcre.match(x)])
+                            xplatforms.update([x.split("_")[-1] for x in installeds])
+
+                        for platform in xplatforms:
+                            publisheds.update(publishedd.get(platform, []))
+                        allnames = installeds.union(publisheds)
+
                         stats_npkginsts += len(installeds)
-                        name2installeds = dict([(pkg.name, pkg) for pkg in installeds
-                            if not pkgcre or pkgcre.match(pkg.name)])
-
-                        publisheds = dom.get_published_packages(platforms)
                         stats_npkgpubs += len(publisheds)
-                        name2publisheds = dict([(pkg.name, pkg) for pkg in publisheds
-                            if not pkgcre or pkgcre.match(pkg.name)])
 
-                        allnames = set(name2installeds.keys()).union(name2publisheds.keys())
+                        # filter package names
+                        if pkgcre:
+                            allnames = set([name for name in allnames if pkgcre.match(name)])
+
                         stats_npkgmatches += len(allnames)
 
                         recs = []
-                        for pname in sorted(allnames):
-                            status = []
-                            if pname in name2installeds:
-                                status.append("I")
-                            if pname in name2publisheds:
+                        for name in sorted(allnames):
+                            for platform in xplatforms:
+                                status = []
+                                # TODO: fix this UGLY!
+                                if name in installeds and name.endswith("_"+platform):
+                                    status.append("I")
+                                if name in publishedd.get(platform, {}):
+                                    if status:
+                                        status.append("P")
+                                    else:
+                                        status.append("p")
                                 if status:
-                                    status.append("P")
-                                else:
-                                    status.append("p")
-                            recs.append(("".join(status), pname))
+                                    recs.append(("".join(status), platform, name))
                             #print "package  %s  %s" % ("".join(status), pname)
                         if recs:
                             stats_npkgdoms += 1
 
                             if displayfmt == "csv":
                                 for rec in recs:
-                                    print "%s,%s,%s" % (dom.path, rec[0], rec[1])
+                                    print "%s,%s,%s,%s" % (dom.path, rec[0], rec[1], rec[2])
                             else:
                                 lines = []
                                 for rec in recs:
-                                    lines.append(fmt % (rec[0], rec[1]))
+                                    lines.append(fmt % (rec[0], rec[1], rec[2]))
                                 print "----- domain (%s) -----" % (dom.path,)
-                                print "\n".join(columnize(lines, displaywidth, 2))
+                                print "\n".join(columnize(lines, onecolumn and 1 or displaywidth, 2))
                                 print
+
+                if showprogress:
+                    print "%s\r" % eraseline,
 
         if stats:
             stats_elapsedtime = time.time()-t0
