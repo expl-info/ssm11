@@ -164,12 +164,18 @@ class Domain:
         d = {}
         d["path"] = self.path
         d["meta"] = self.get_meta().getall()
+        d["legacy"] = self.is_legacy()
         installed = {}
-        for plat in os.listdir(self.installed_path):
-            root = os.path.join(self.installed_path, plat)
-            for name in os.listdir(root):
-                path = os.path.join(root, name)
+        if d["legacy"]:
+            for name in os.listdir(self.installed_path):
+                path = os.path.join(self.installed_path, name)
                 installed[name] = os.readlink(path)
+        else:
+            for plat in os.listdir(self.installed_path):
+                root = os.path.join(self.installed_path, plat)
+                for name in os.listdir(root):
+                    path = os.path.join(root, name)
+                    installed[name] = os.readlink(path)
         d["installed"] = installed
         published = {}
         for plat in os.listdir(self.published_path):
