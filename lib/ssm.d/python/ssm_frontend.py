@@ -21,6 +21,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 # GPL--end
 
+# encoding hack
+import sys
+reload(sys)
+sys.setdefaultencoding("utf-8")
+import sys as _sys
+_sys.dont_write_bytecode = True
+
 import sys
 from sys import stderr
 
